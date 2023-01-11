@@ -1,0 +1,39 @@
+{{ form_start(formChauffeur, {'multipart': true, 'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+
+<div class="form-row align-items-end">
+    <div class="col-md-6">{{ form_row(formChauffeur.nom) }}</div>
+    <div class="col-md-6">{{ form_row(formChauffeur.prenom) }}</div>
+</div>
+
+<div class="form-row align-items-end">
+    <div class="col-md-6">{{ form_row(formChauffeur.telephone) }}</div>
+    <div class="col-md-6">{{ form_row(formChauffeur.imageFile) }}</div>
+</div>
+
+<div class="form-row align-items-end">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="typeVehicule">Type de vehicule</label>
+            <select name="typeVehicule" id="typeVehicule" class="form-control" required>
+                <option value="">-- CHOISIR TYPE DE VEHICULE --</option>
+                {% for typeVehicule in typeVehicules %}
+                    <option value="{{ typeVehicule.id }}">-- VEHICULE DE TYPE {{ typeVehicule.name|upper }} --</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="dateNaissance">DATE NAISSANCE</label>
+            <input type="date" name="dateNaissance" id="dateNaissance" class="form-control">
+        </div>
+    </div>
+</div>
+
+{{ form_widget(formChauffeur) }}
+
+<div class="form-group mt-3 mb-3">
+    <button class="btn btn-primary float-right" name="btnAddChauffeur" value="1"
+            type="submit">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_start(formChauffeur) }}

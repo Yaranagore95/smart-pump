@@ -1,0 +1,52 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title %}Modifier global stockage{% endblock %}
+
+{% block body %}
+    <h3 class="font-weight-bold">GESTION STOCKAGE</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold">MODIFICATION STOCKAGE GLOBAL STOCKAGE</h3>
+        <div class="card-body">
+            <form class="col-md-12 text-uppercase font-weight-bold" method="POST"
+                  onsubmit="return confirm('Êtes-vous sûr(e) des infos ?')"
+                  action="{{ path('gestion_stockages.editGlobalStockage', {'id': globalStockage.id}) }}">
+                <div class="form-group">
+                    <label for="typeCarburant">Type de carburant</label>
+                    <select name="typeCarburant" id="typeCarburant" class="form-control" required>
+                        <option value="">-- CHOISIR TYPE DE CARBURANT</option>
+                        {% for typeCarburant in typeCarburants %}
+                            <option {% if globalStockage.typeCarburant is same as(typeCarburant) %} selected {% endif %}
+                                    value="{{ typeCarburant.id }}">{{ typeCarburant.name|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quantite">QUANTITE</label>
+                    <input type="number" class="form-control" value="{{ globalStockage.quantite }}" required
+                           id="quantite" name="quantite">
+                </div>
+                <div class="form-group">
+                    <label for="prixUnitaire">PRIX ACHAT LITTRE</label>
+                    <input type="number" class="form-control" required name="prixAchat"
+                           value="{{ globalStockage.prixAchat }}" id="prixUnitaire">
+                </div>
+                <div class="form-group">
+                    <label for="manquant">MANQUANT</label>
+                    <input type="number" class="form-control" name="manquant" id="manquant" required
+                           value="{{ globalStockage.manquant }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="createdAt">DATE</label>
+                    <input type="date" class="form-control" required name="createdAt" id="createdAt">
+                </div>
+
+                <button class="btn btn-danger float-right mt-3 mb-3" type="submit" name="btn_valider">
+                    MODIFIER
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+

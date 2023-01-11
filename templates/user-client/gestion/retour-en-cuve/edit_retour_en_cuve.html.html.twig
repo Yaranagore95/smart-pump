@@ -1,0 +1,15 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Modification retour en cuve' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">GESTION RETOUR EN CUVE</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">Modification retour en cuve</h3>
+
+        <div class="card-body">
+            {{ include('user-client/gestion/retour-en-cuve/_form_retour_en_cuve.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

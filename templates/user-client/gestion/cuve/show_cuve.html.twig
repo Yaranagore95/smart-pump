@@ -1,0 +1,322 @@
+{% extends "base-gestion-client.html.twig" %}
+
+{% block title 'Detail cuve' %}
+
+{% block stylesheets %}
+    <style>
+        .content-bar {
+            margin: auto;
+            width: 600px;
+            text-align: center;
+        }
+
+        .content-bar .cuve {
+            margin: 0 auto;
+            width: 600px;
+        }
+
+        .cuve {
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 6px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(0, 0, 0, 0.08);
+        }
+
+        .cuve-bar {
+            height: 100px;
+            border-radius: 4px;
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.05));
+            transition: 1s linear;
+            transiton-property: width, background-color;
+            box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        #cinq:checked ~ .cuve > .cuve-bar {
+            width: 5%;
+            background-color: #8B0001;
+        }
+
+        #dix:checked ~ .cuve > .cuve-bar {
+            width: 10%;
+            background-color: #B12E21;
+        }
+
+        #vingt:checked ~ .cuve > .cuve-bar {
+            width: 20%;
+            background-color: #C34632;
+        }
+
+        #trente:checked ~ .cuve > .cuve-bar {
+            width: 30%;
+            background-color: #C34632;
+        }
+
+        #quarante:checked ~ .cuve > .cuve-bar {
+            width: 40%;
+            background-color: #E97452;
+        }
+
+        #cinquante:checked ~ .cuve > .cuve-bar {
+            width: 50%;
+            background-color: #FF9680;
+        }
+
+        #soixante:checked ~ .cuve > .cuve-bar {
+            width: 60%;
+            background-color: #FFCDA1;
+        }
+
+        #soixante-dix:checked ~ .cuve > .cuve-bar {
+            width: 70%;
+            background-color: #DEEAA9;
+        }
+
+        #quatre-vingt:checked ~ .cuve > .cuve-bar {
+            width: 80%;
+            background-color: #69E289;
+        }
+
+        #quatre-vingt-dix:checked ~ .cuve > .cuve-bar {
+            width: 90%;
+            background-color: #69E289;
+        }
+
+        #cent:checked ~ .cuve > .cuve-bar {
+            width: 100%;
+            background-color: #60D088;
+        }
+
+        .radio {
+            display: none;
+        }
+
+        .label {
+            display: inline-block;
+            margin: 0 5px 10px;
+            width: 40px;
+            height: 50px;
+            line-height: 50px;
+            boder-radius: 100%;
+            text-shadow: 0 1px #000;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">Detail {{ cuve.numero }}
+            | {{ cuve.station.name }}</h3>
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <input type="hidden" id="percentageValue" name="percentage" value="{{ percentage }}">
+            <div class="table-responsive">
+                <div class="content-bar text-center">
+                    <input type="radio" disabled class="radio" name="progress" value="cinq" id="cinq">
+                    <label for="cinq" class="label">5%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="dix" id="dix">
+                    <label for="dix" class="label">10%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="vingt" id="vingt">
+                    <label for="vingt" class="label">20%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="trente" id="trente">
+                    <label for="trente" class="label">30%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="quarante" id="quarante">
+                    <label for="quarante" class="label">40%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="cinquante" id="cinquante">
+                    <label for="cinquante" class="label">50%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="soixante" id="soixante">
+                    <label for="soixante" class="label">60%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="soixante-cinq" id="soixante-dix">
+                    <label for="soixante-dix" class="label">70%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="quatre-vingt" id="quatre-vingt">
+                    <label for="quatre-vingt" class="label">80%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="quatre-vingt-dix"
+                           id="quatre-vingt-dix">
+                    <label for="quatre-vingt-dix" class="label">90%</label>
+
+                    <input type="radio" disabled class="radio" name="progress" value="cent" id="cent">
+                    <label for="cent" class="label">100%</label>
+
+                    <div class="cuve">
+                        <div class="cuve-bar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered text-center font-weight-bold">
+                    <thead>
+                    <tr class="bg-primary-gradient text-white">
+                        <th>NUMERO</th>
+                        <th>CAPACITE</th>
+                        <th>RESTANT</th>
+                        <th>%</th>
+                        <th>MAJ</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{ cuve.numero }}</td>
+                        <td>{{ cuve.capacity|number_format }} L</td>
+                        <td>
+                            {{ cuve.stock|number_format }}
+                            L
+                        </td>
+                        <td>
+                            {% if percentage < 50 %} <span class="badge badge-danger">{{ percentage|number_format }} %
+                            </span>
+                            {% elseif percentage >= 50 and percentage < 75 %} <span
+                                    class="badge badge-warning">{{ percentage|number_format }} % </span>
+                            {% else %}
+                                <span class="badge badge-success">{{ percentage|number_format }} % </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ cuve.updatedAt|date('d-m-Y') }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3 class="font-weight-bold mt-3">LES DERNIERS SORTI DE LA CUVE</h3>
+            <hr>
+            <div class="table-responsive">
+                {% if ventes is not empty %}
+                    <table class="table table-bordered text-center font-weight-bold">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <td>DATE</td>
+                            <td>QTE</td>
+                            <td>MONTANT V</td>
+                            <td>MONTANT A</td>
+                            <td>GAIN</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for vente in ventes %}
+                            <tr>
+                                <td><span class="badge badge-primary font-weight-bold">{{ vente.createdAt|date('d-m-Y') }}</span></td>
+                                <td><span class="badge badge-danger font-weight-bold">{{ vente.quantite|number_format }} L</span></td>
+                                <td><span class="badge badge-dark font-weight-bold">{{ vente.montantVente|number_format }} F</span></td>
+                                <td><span class="badge badge-success font-weight-bold">{{ vente.montantAchat|number_format }} F</span></td>
+                                <td><span class="badge badge-info font-weight-bold">{{ vente.gain|number_format }} F</span></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="mt-3 float-right">{{ knp_pagination_render(ventes) }}</div>
+                    {% else %}
+                    <div class="alert alert-danger font-weight-bold text-center text-uppercase">SORTIS DE LA CUVE NON TROUVEE</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="dateModal" class="modal fade" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <form class="modal-content" action="#" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">VENTE PAR DATE</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label for="dateInf">DEBUT</label>
+                            <input type="date" name="dateInf" class="form-control" required id="dateInf">
+                        </div>
+                        <div class="col form-group">
+                            <label for="dateSup">FIN</label>
+                            <input type="date" name="dateSup" class="form-control" required id="dateSup">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">VALIDER</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">ANNULER</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        let val = document.getElementById("percentageValue").value;
+        if (val > 0 && val <= 5) {
+            let btn = document.getElementById('#cinq');
+            btn.checked = true;
+        }
+
+        if (val > 5 && val <= 10) {
+            let btn = document.getElementById('dix');
+            btn.checked = true;
+        }
+
+        if (val > 10 && val <= 20) {
+            let btn = document.getElementById('vingt');
+            btn.checked = true;
+        }
+
+        if (val > 20 && val <= 30) {
+            let btn = document.getElementById('trente');
+            btn.checked = true;
+        }
+
+        if (val > 30 && val <= 40) {
+            let btn = document.getElementById('quarante');
+            btn.checked = true;
+        }
+
+        if (val > 40 && val <= 50) {
+            let btn = document.getElementById('cinquante');
+            btn.checked = true;
+        }
+
+        if (val > 50 && val <= 60) {
+            let btn = document.getElementById('soixante');
+            btn.checked = true;
+        }
+
+        if (val > 60 && val <= 70) {
+            let btn = document.getElementById('soixante-dix');
+            btn.checked = true;
+        }
+
+        if (val > 70 && val <= 80) {
+            let btn = document.getElementById('quatre-vingt');
+            btn.checked = true;
+        }
+
+        if (val > 80 && val <= 90) {
+            let btn = document.getElementById('quatre-vingt-dix');
+            btn.checked = true;
+        }
+
+        if (val > 90 && val <= 100) {
+            let btn = document.getElementById('cent');
+            btn.checked = true;
+        }
+    </script>
+{% endblock %}

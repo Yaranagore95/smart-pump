@@ -1,0 +1,23 @@
+{{ form_start(form, {'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+
+<div class="form-group">
+    <label for="vehiculeChauffeur">VEHICULE CHAUFFEUR</label>
+    <select name="vehiculeChauffeur" id="vehiculeChauffeur" class="form-control text-uppercase"
+            required>
+        <option value="">-- CHOISIR LE VEHICULE --</option>
+        {% for typeVehicule in typeVehicules %}
+            {% for chauffeur in typeVehicule.chauffeurs %}
+                {% for vehicule in chauffeur.vehiculeChauffeurs %}
+                    <option {% if bon.vehiculeChauffeur.id == vehicule.id %} selected {% endif %}
+                            value="{{ vehicule.id }}">{{ vehicule.immatriculation|upper }}</option>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </select>
+</div>
+{{ form_widget(form) }}
+
+<div class="form-group mt-3 mb-3">
+    <button class="btn btn-primary float-right" type="submit">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_start(form) }}

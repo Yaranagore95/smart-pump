@@ -1,0 +1,41 @@
+{{ form_start(form, {'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+<div class="form-row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="stockage_single_typeCarburant">Type de carburant</label>
+            <select class="form-control" required autofocus name="typeCarburant" id="stockage_single_typeCarburant">
+                <option value="">-- CHOISIR TYPE CARBURANT --</option>
+                {% for typeC in typeCarburants %}
+                    <option value="{{ typeC.id }}">{{ typeC.name|upper }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="stockage_cuve">Pistolet</label>
+            <select id="stockage_cuve" name="pistolet" class="form-control text-uppercase" required>
+                <option value="">-- SELECTIONNER UN PISTOLET --</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="col-md-6">
+        {{ form_row(form.valIndex) }}
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="createdAt">DATE</label>
+            <input type="date" class="form-control" name="createdAt" id="createdAt" required>
+        </div>
+    </div>
+</div>
+
+
+{{ form_widget(form) }}
+<div class="form-group mb-3 mt-3">
+    <button type="submit" name="btnNewIndex" value="1" class="btn btn-primary float-right">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_end(form) }}

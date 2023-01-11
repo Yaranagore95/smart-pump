@@ -1,0 +1,61 @@
+{% extends 'base-login.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+
+    <div class="container" style="margin-top: 80px;">
+        <div class="row">
+            <div class="col-md-6 mt-5">
+                <img src="{{ asset('images/smart-pump.jpg') }}" alt="logo sfb" width="100%" height="400px">
+            </div>
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <h3 class="card-header text-uppercase font-weight-bold">Bienvenu(e) chez TADJI SO</h3>
+                    <div class="card-body text-uppercase">
+
+                        <p>Heureux de vous revoir !</p>
+
+                        <form method="post">
+                            {% if error %}
+                                <div class="alert alert-danger text-center font-weight-bold">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                            {% endif %}
+
+                            {% if app.user %}
+                                <div class="mb-3">
+                                    You are logged in as {{ app.user.username }}, <a href="{{ path('app_logout') }}">Logout</a>
+                                </div>
+                            {% endif %}
+
+                            <div class="form-group font-weight-bold">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" value="{{ last_username }}" name="email"
+                                       id="email" autocomplete="email" required autofocus>
+                            </div>
+                            <div class="form-group font-weight-bold">
+                                <label for="password">Mot de passe</label>
+                                <input type="password" name="password" id="password" class="form-control"
+                                       autocomplete="current-password"
+                                       required>
+                            </div>
+                            <input type="hidden" name="_csrf_token"
+                                   value="{{ csrf_token('authenticate') }}"
+                            >
+                            <div class="checkbox mb-3">
+                                <label>
+                                    <input type="checkbox" name="_remember_me"> SE SOUVENIR DE MOI
+                                </label>
+                            </div>
+                            <div class="form-group float-right">
+                                <button class="btn btn btn-warning" type="submit">
+                                    SE CONNECTER
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

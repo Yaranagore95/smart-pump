@@ -1,0 +1,216 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Les stockages' %}
+
+{% block body %}
+    <h3 class="font-weight-bold">GESTION STOCKAGES</h3>
+    <hr>
+    <div class="card">
+        <div class="card-body font-weight-bold text-uppercase">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            <h3 class="font-weight-bold"><i class="fas fa-plus"></i>&nbsp;ENREGISTREMENT STOCKAGE</h3>
+            <hr>
+            <div class="alert alert-info text-center font-weight-bold text-uppercase">Vous devez enregistrer le stockage
+                gloabe avant le stockage de la cuve !
+            </div>
+            {{ include('user-client/gestion/stockage/_form_add.html.twig') }}
+            <hr class="mt-5">
+            {% if stockages is defined %}
+                <h3 class="font-weight-bold text-uppercase mt-3">LES STOCKAGES DE CARBURANTS DANS LES CUVES</h3>
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered font-weight-bold text-center">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>CUVE</th>
+                            <th>QUANTITE</th>
+                            <th>MANQUANT</th>
+                            <th>DATE</th>
+                            <th>PRIX U</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for stock in stockages %}
+                            <tr>
+                                <td><span class="badge badge-info font-weight-bold">{{ stock.cuve.numero|upper }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-dark font-weight-bold">{{ stock.quantite|number_format }} L</span>
+                                </td>
+                                <td><span class="badge badge-danger font-weight-bold">{{ stock.manquant }} L</span></td>
+                                <td>
+                                    <span class="badge badge-success font-weight-bold">{{ stock.createdAt|date('d/m/Y') }}</span>
+                                </td>
+                                <td><span class="badge badge-primary font-weight-bold">{{ stock.prixUnitaire }} F</span>
+                                </td>
+                                <td>
+                                    {% if stock.isLast %}
+                                        <a href="{{ path('gestion_stockages.edit', {'id': stock.id}) }}"
+                                           class="btn btn-sm btn-danger"><i class="fas fa-edit"></i></a>
+                                    {% else %}
+                                        <a href="#" class="btn btn-sm btn-dark"><i class="fas fa-eye-slash"></i></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+                    <div class="float-right mt-2">{{ knp_pagination_render(stockages) }}</div>
+                </div>
+            {% endif %}
+
+            {% if stockageGlobals is defined %}
+                <h3 class="font-weight-bold text-uppercase mt-3">LES STOCKAGES GLOBALS DE CARBURANTS</h3>
+                <div class="table-responsive mt-3">
+                    <table class="table table table-bordered font-weight-bold text-uppercase text-center">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>CARBURANT</th>
+                            <th>QTE</th>
+                            <th>DATE</th>
+                            <th>MANQUANT</th>
+                            <th>PRIX ACHAT</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for stockageG in stockageGlobals %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-secondary font-weight-bold text-uppercase">{{ stockageG.typeCarburant.name|upper }}</span>
+                                </td>
+                                <td><span class="badge badge-danger font-weight-bold">{{ stockageG.quantite|number_format }} L</span></td>
+                                <td><span class="badge badge-success">{{ stockageG.createdAt|date('d-m-Y') }}</span></td>
+                                <td><span class="badge badge-dark font-weight-bold">{{ stockageG.manquant|number_format }} L</span></td>
+                                <td><span class="font-weight-bold badge badge-info">{{ stockageG.prixAchat }} F</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_stockages.editGlobalStockage', {'id': stockageG.id}) }}"
+                                           class="btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('gestion_stockages.deleteGlobalStockage', {'id': stockageG.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ stockageG.id) }}">
+                                            <button class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            <button type="button" class="btn btn-primary float-right mt-3" data-toggle="modal"
+                    data-target=".bd-example-modal-lg">
+                ENREGISTREMENT STOCKAGE GLOBAL
+            </button>
+        </div>
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLong"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="font-weight-bold">ENREGISTREMENT GLOBAL STOCKAGE</h3>
+                    </div>
+                    <form class="col-md-12 text-uppercase font-weight-bold" method="POST"
+                          onsubmit="return confirm('Êtes-vous sûr(e) des infos ?')"
+                          action="{{ path('gestion_stockages.addGlobalStockage') }}">
+                        <div class="form-group">
+                            <label for="typeCarburant">Type de carburant</label>
+                            <select name="typeCarburant" id="typeCarburant" class="form-control" required>
+                                <option value="">-- CHOISIR TYPE DE CARBURANT</option>
+                                {% for typeCarburant in typeCarburants %}
+                                    <option value="{{ typeCarburant.id }}">{{ typeCarburant.name|upper }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantite">QUANTITE</label>
+                            <input type="number" class="form-control" required id="quantite" name="quantite">
+                        </div>
+                        <div class="form-group">
+                            <label for="prixUnitaire">PRIX ACHAT LITTRE</label>
+                            <input type="number" class="form-control" required name="prixAchat" id="prixUnitaire">
+                        </div>
+                        <div class="form-group">
+                            <label for="manquant">MANQUANT</label>
+                            <input type="number" class="form-control" name="manquant" id="manquant" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="createdAt">DATE</label>
+                            <input type="date" class="form-control" required name="createdAt" id="createdAt">
+                        </div>
+
+                        <button class="btn btn-danger float-right mt-3 mb-3" type="submit" name="btn_valider">
+                            ENREGISTRER
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(".alert").delay(5000).slideUp(200, function () {
+            $(this).alert('close');
+        });
+        let typeCarburant = $('#stockage_single_typeCarburant');
+        let cuveStockage = $('#stockage_cuve');
+
+        $(document).ready(function () {
+            typeCarburant.val('');
+            cuveStockage.empty();
+        });
+
+        typeCarburant.on('change', function (e) {
+            let id = e.target.value;
+            if (id !== '') {
+                loadCuves(id);
+                cuveStockage.empty();
+            }
+        });
+
+        function loadCuves(typeId) {
+            $.ajax({
+                url: '/get-cuves-by-type-carburant/' + typeId,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    cuveStockage.empty().append($('<option>', {
+                        value: '',
+                        text: "-- SELECTIONNER LA CUVE DE STOCKAGE --"
+                    }));
+
+                    $.each(data, function (index, cuve) {
+                        cuveStockage.append($('<option>', {
+                            value: cuve['id'],
+                            text: cuve['numero']
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.log('error ==> ' + error)
+                }
+            });
+        }
+    </script>
+{% endblock %}

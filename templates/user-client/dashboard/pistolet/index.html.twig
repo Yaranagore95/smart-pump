@@ -1,0 +1,85 @@
+{% extends "base-dashboard-client.html.twig" %}
+
+{% block title 'Les pistolets' %}
+
+{% block body %}
+    <h3 class="font-weight-bolder text-uppercase mt-3 mb-3">Gestion des pistolet</h3>
+    <hr>
+
+    <div class="card">
+        <h3 class="card-header font-weight-bold">LES PISTOLETS</h3>
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% if pistolets is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center font-weight-bold">
+                        <thead class="bg-primary-gradient text-white">
+                        <tr>
+                            <th>NUMERO</th>
+                            <th>INDEX</th>
+                            <th>LITTRE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for pistolet in pistolets %}
+                            <tr>
+                                <td>{{ pistolet.pompe.numero }} | {{ pistolet.numero }}</td>
+                                <td>{{ pistolet.indexPistolet|format_number }}</td>
+                                <td>{{ pistolet.typeCarburant.prixLittre }} F</td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Groupe de button">
+                                        <a type="button" href="#"
+                                           class="btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>
+                                        <a type="button"
+                                           href="{{ path('clients.pistolets.edit', {'id': pistolet.id}) }}"
+                                           class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+
+                                        <form method="post"
+                                              action="{{ path('clients.pistolets.delete', {'id': pistolet.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ce pistolet ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ pistolet.id) }}">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-danger font-weioght-bold text-uppercase text-center">
+                    Vous n'avez pas encore enregistré de pistolets
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('clients.pistolets.create') }}"
+               class="btn btn-warning font-weight-bold text-uppercase"><i
+                        class="fas fa-plus"></i>&nbsp;Nouveau pistolet
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(".alert").delay(5000).slideUp(200, function () {
+            $(this).alert('close');
+        });
+    </script>
+{% endblock %}

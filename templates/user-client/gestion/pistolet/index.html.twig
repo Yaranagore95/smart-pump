@@ -1,0 +1,242 @@
+{% extends "base-gestion-client.html.twig" %}
+{% block title %} Les pompes {% endblock %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">Gestion pompes</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">Les pompes</h3>
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if indexationErrors is not empty %}
+                {% for error in indexationErrors %}
+                    <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="table-responsive">
+                {% if pompes is not empty %}
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered font-weight-bold text-uppercase text-center">
+                            <thead>
+                            <tr class="bg-primary-gradient text-white">
+                                <th>NUMERO</th>
+                                <th>STATION</th>
+                                <th>PISTOLET</th>
+                                <th>ACTION</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for pompe in pompes %}
+                                <tr>
+                                    <td><span class="badge badge-primary font-weight-bold">{{ pompe.numero }}</span>
+                                    </td>
+                                    <td>{{ pompe.station.name|upper }}
+                                    </td>
+                                    <td><span class="badge badge-danger">{{ pompe.pistolets|length }}</span></td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Groupe de button">
+                                            <a type="button"
+                                               href="#"
+                                               class="btn btn-outline-success btn-sm">DETAIL</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger font-weioght-bold text-uppercase text-center">
+                        Vous n'avez pas encore enregistré de pompes
+                    </div>
+                {% endif %}
+            </div>
+            <h3 class="font-weight-bold text-uppercase mt-5">LES PISTOLETS</h3>
+            <hr>
+            <div class="table-responsive">
+                <table class="table table-bordered font-weight-bold text-uppercase text-center">
+                    <thead>
+                    <tr class="bg-primary-gradient text-white">
+                        <th>NUMERO</th>
+                        <th>INDEX</th>
+                        <th>LITTRE</th>
+                        <th>ACTION</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for pistolet in pistolets %}
+                        <tr>
+                            <td>
+                                <span class="badge badge-primary font-weight-bold">{{ pistolet.pompe.numero }} | {{ pistolet.numero }}</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-danger font-weight-bold">{{ pistolet.indexPistolet|format_number }}</span>
+                            </td>
+
+                            <td><span class="badge badge-dark font-weight-bold">{{ pistolet.typeCarburant.prixLittre }} F</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Groupe de button">
+                                    <a type="button"
+                                       href="#"
+                                       class="btn btn-outline-info btn-sm">VOIR</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive mt-5">
+                {% if pistoletYesterDayVentes is not empty %}
+                    <hr>
+                    <h3 class="font-weight-bold mb-3">
+                        {% if isDateVente %}
+                            LES VENTES PAR DATE
+                        {% else %}
+                            LES VENTES D'HIER DES PISTOLETES
+                        {% endif %}
+                    </h3>
+
+                    <table class="table table-bordered-bd-primary font-weight-bold text-center text-uppercase">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>TYPE</th>
+                            <th>QTE</th>
+                            <th>MONTANT</th>
+                            <th>DATE</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for pistoletVente in pistoletYesterDayVentes %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-success font-weight-bold">{{ pistoletVente['type'] }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-danger font-weight-bold">{{ pistoletVente['qte'] }} L</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-info font-weight-bold">{{ pistoletVente['montant']|number_format }} F</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-secondary font-weight-bold">{{ pistoletVente['date'] }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+
+            {# {% if arrayVentePistolets is not empty %}
+                <h3 class="font-weight-bold text-uppercase mt-5">LA DERNIERE VENTE DES PISTOLETS</h3>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr class="bg-primary text-white">
+                            <th>QTE</th>
+                            <th>MONTANT</th>
+                            <th>DATE</th>
+                            <th>PISTOLET</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ventePistolet in arrayVentePistolets %}
+                            <tr>
+                                <td><span class="badge badge-dark">{{ ventePistolet.quantite|number_format }} L</span></td>
+                                <td class="font-weight-bold"><span class="badge badge-danger font-weight-bold">{{ ventePistolet.prixVente|number_format }} FCFA</span></td>
+                                <td>{{ ventePistolet.createdAt|date('d-m-Y H:m:s') }}</td>
+                                <td>{{ ventePistolet.pistolet.numeroPompe }} {{ ventePistolet.pistolet.numeroPistolet }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-responsive mt-5">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr class="bg-primary text-white">
+                            <th colspan="3">TOTAL</th>
+                        </tr>
+                        <tr class="bg-primary text-white">
+                            <th>TYPE</th>
+                            <th>QTE</th>
+                            <th>MONTANT</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for typeV in arrayType %}
+                            <tr class="font-weight-bold">
+                                <td>{{ typeV.type|upper }}</td>
+                                <td><span class="badge badge-dark font-weight-bold">{{ typeV.qte|number_format }} L</span></td>
+                                <td><span class="badge badge-success font-weight-bold">{{ typeV.montant|number_format }} FCFA</span></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="float-right">
+                    <button class="btn btn-outline-dark font-weight-bold">MONTANT TOTAL : {{ montantTotal|number_format }} FCFA</button>
+                </div>
+            {% endif %} #}
+        </div>
+        <div class="card-footer">
+            <div class="btn btn-outline-success float-right font-weight-bold" data-toggle="modal"
+                 data-target="#indexParDate">VENTE PISTOLET PAR DATE
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-lg" id="indexParDate" tabindex="-1" role="dialog"
+         aria-labelledby="myLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary-gradient text-white">
+                    <h3 class="font-weight-bold">VENTES DES PISTOLTES PAR DATE</h3>
+                </div>
+                <form class="col-md-12 text-uppercase font-weight-bold" method="POST"
+                      onsubmit="return confirm('Êtes-vous sûr(e) ?')"
+                      action="{{ path('gestion_pistolets.index') }}">
+                    <div class="form-group">
+                        <label for="dateInf">Date inf</label>
+                        <input type="date" class="form-control" autofocus name="dateInf" required id="dateInf">
+                    </div>
+                    <div class="form-group">
+                        <label for="dateSup">Date sup</label>
+                        <input type="date" class="form-control" autofocus name="dateSup" required id="dateSup">
+                    </div>
+                    <button class="btn btn-outline-primary float-right mt-3 mb-3" type="submit" name="btnVenteByDate"
+                            value="1">
+                        ENVOYER
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(".alert").delay(10000).slideUp(200, function () {
+            $(this).alert('close');
+        });
+    </script>
+{% endblock %}

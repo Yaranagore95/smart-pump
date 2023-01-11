@@ -1,0 +1,101 @@
+{% extends 'base-super-admin.html.twig' %}
+
+{% block title 'Les clients' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">GESTION UTILISATEURS</h3>
+    <hr>
+
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">LES UTILISATEURS</h3>
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if users is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered text-center font-weight-bold">
+                        <thead class="bg-light">
+                        <tr>
+                            <th>NOM</th>
+                            <th>PRENOM</th>
+                            <th>EMAIL</th>
+                            <th>PHONE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody class="text-uppercase font-weight-bold">
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.nom }}</td>
+                                <td>{{ user.prenom }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.telephone }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="#" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                        {% if  app.user and app.user.id == user.id %}
+                                            <a href="{{ path('superAdmin.users.edit', {'id': user.id}) }}"
+                                               class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                        {% endif %}
+                                        {% if app.user and app.user.isAdmin %}
+                                            {% if not user.isEnabled %}
+                                                <a href="{{ path('superAdmin.users.changeEnabled', {'id': user.id}) }}"
+                                                   class="btn btn-sm btn-info"><i class="fas fa-arrow-up"></i></a>
+                                            {% else %}
+                                                <a href="{{ path('superAdmin.users.changeEnabled', {'id': user.id}) }}"
+                                                   class="btn btn-sm btn-dark"><i
+                                                            class="fas fa-arrow-down"></i></a>
+                                            {% endif %}
+                                            {% if app.user.isAdmin %}
+                                                <a href="{{ path('superAdmin.users.changeAdmin', {'id': user.id}) }}"
+                                                   class="btn btn-sm btn-warning"><i
+                                                            class="fas fa-user-minus"></i></a>
+                                                {% else %}
+                                                    <a href="{{ path('superAdmin.users.changeAdmin', {'id': user.id}) }}"
+                                                       class="btn btn-sm btn-info"><i
+                                                                class="fas fa-user-graduate"></i></a>
+                                            {% endif %}
+                                            <form method="post"
+                                                  action="{{ path('superAdmin.users.delete', {'id': user.id}) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr(e) de supprimer cet utilisateur ?');">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('delete' ~ user.id) }}">
+                                                <button class="btn btn-sm btn-danger btn-sm"><i
+                                                            class="fas fa-trash"></i></button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="float-right pagination">{{ knp_pagination_render(users) }}</div>
+            {% else %}
+                <div class="alert alert-danger font-weight-bold text-center">AUCUN ENREGISTREMENT TROUVE</div>
+            {% endif %}
+        </div>
+        {% if app.user.isAdmin %}
+            <div class="card-footer">
+                <a href="{{ path('superAdmin.users.create') }}" class="btn btn-light text-center"><i
+                            class="fas fa-plus"></i>&nbsp; NOUVEAU UTILISATEUR</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}

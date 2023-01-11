@@ -1,0 +1,18 @@
+{{ form_start(form, {'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+<div class="form-group">
+    <label for="typeCarburant">Type de carburant</label>
+    <select class="form-control" required autofocus name="typeCarburant" id="typeCarburant">
+        <option value="">-- CHOISIR TYPE CARBURANT --</option>
+        {% for typeC in typeCarburants %}
+            <option {% if cuve is defined and cuve.typeCarburant is same as(typeC) %} selected="" {% endif %}
+                    value="{{ typeC.id }}">{{ typeC.name|upper }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+{{ form_widget(form) }}
+
+<div class="form-group mt-3">
+    <button class="btn btn-primary float-right">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_end(form) }}

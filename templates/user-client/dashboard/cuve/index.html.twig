@@ -1,0 +1,87 @@
+{% extends 'base-dashboard-client.html.twig' %}
+{% block title 'Les cuves' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">GESTION CUVES</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold">LES CUVES</h3>
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if cuves is not empty %}
+                <div class="table-responsive font-weight-bold">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>NUMERO</th>
+                            <th>CAPACITE</th>
+                            <th>STOCK</th>
+                            <th>EN COURS</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for cuve in cuves %}
+                            <tr>
+                                <td>{{ cuve.numero }}</td>
+                                <td>{{ cuve.capacity|number_format }} L</td>
+                                <td>{{ cuve.stock|number_format }} L</td>
+
+                                <td>
+                                    {% if cuve.isActived %}
+                                        <span class="badge badge-primary">EN COURS ..</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">DESACTIVE</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Groupe de button">
+                                        <a type="button"
+                                           href="{{ path('clients.cuves.edit', {'id': cuve.id}) }}"
+                                           class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+
+                                        <form method="post"
+                                              action="{{ path('clients.cuves.delete', {'id': cuve.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer cette cuve ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ cuve.id) }}">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    Vous n'avez pas encore de cuve enregistrée
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('clients.cuves.create') }}" class="btn btn-warning mb-3 font-weight-bolder text-uppercase"><i
+                        class="fas fa-plus"></i>&nbsp;Nouvelle
+                cuve</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}

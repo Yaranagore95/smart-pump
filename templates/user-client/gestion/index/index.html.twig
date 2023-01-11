@@ -1,0 +1,249 @@
+{% extends "base-gestion-client.html.twig" %}
+
+{% block title %} Les indexations du pistolet {% endblock %}
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">Gestion des index</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold"><i class="fas fa-plus"></i>&nbsp;ENREGISTREMENT INDEX</h3>
+        <div class="card-body font-weight-bold text-uppercase">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-boldmb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {{ include('user-client/gestion/index/_form_add.html.twig') }}
+
+            <hr class="mt-5">
+
+            {% if indexations is defined and indexations|length != 0 %}
+                <h3 class="font-weight-bold mb-3">LES INDEX DES PISTOLETS</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered font-weight-bold text-uppercase text-center">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>INDEX</th>
+                            <th>LITTRE</th>
+                            <th>PISTOLET</th>
+                            <th>DATE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for indexation in indexations %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-info text-uppercase font-weight-bold">{{ indexation.valIndex|format_number }}</span>
+                                </td>
+                                <td><span class="badge badge-success font-weight-bold">{{ indexation.difference|format_number }} L</span></td>
+                                <td>
+                                    <span class="badge badge-dark font-weight-bold">{{ indexation.pistolet.pompe.numero }} {{ indexation.pistolet.numero }}</span>
+                                </td>
+                                <td><span class="badge badge-danger font-weight-bold">{{ indexation.createdAt|date('d-m-Y') }}</span></td>
+                                <td>
+                                    <a href="#" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="float-right pagination">{{ knp_pagination_render(indexations) }}</div>
+            {% else %}
+
+                <div class="alert alert-danger text-center font-weight-bold text-uppercase">Pas d'enregistrement
+                    trouvé
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <div class="btn btn-outline-success float-right font-weight-bold" data-toggle="modal"
+                 data-target="#indexParDate">INDEX PAR DATE
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="hidden" value="{{ app.user.id }}" id="user_id">
+    </div>
+
+    <div class="modal fade bd-example-modal-lg" id="indexParDate" tabindex="-1" role="dialog"
+         aria-labelledby="myLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary-gradient text-white">
+                    <h3 class="font-weight-bold">INDEX DES PISTOLTES PAR DATE</h3>
+                </div>
+                <form class="col-md-12 text-uppercase font-weight-bold" method="POST"
+                      onsubmit="return confirm('Êtes-vous sûr(e) ?')"
+                      action="{{ path('gestion_indexations.index') }}">
+                    <div class="form-group">
+                        <label for="dateInf">Date inf</label>
+                        <input type="date" class="form-control" autofocus name="dateInf" required id="dateInf">
+                    </div>
+                    <div class="form-group">
+                        <label for="dateSup">Date sup</label>
+                        <input type="date" class="form-control" autofocus name="dateSup" required id="dateSup">
+                    </div>
+                    <button class="btn btn-outline-primary float-right mt-3 mb-3" type="submit" name="btnIndexByDate" value="1">
+                        ENVOYER
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# <div class="card">
+        <form class="card-header" action="{{ path('admin.indexation') }}" method="POST">
+            <div id="row1">
+                <div id="form-station" class="form-group">
+                    <label for="form_station">La station</label>
+                    <select class="form-control" name="form_station" id="form_station">
+                        <option value="">-- SELECTIONNER LA STATION --</option>
+                    </select>
+                </div>
+
+                <div id="form-pompe" class="form-group d-none col-md-6">
+                    <label for="form_pompe">La pompe</label>
+                    <select class="form-control" name="form_pompe" id="form_pompe">
+                        <option value="">-- SELECTIONNER LA POMPE --</option>
+                    </select>
+                </div>
+
+                <div id="form-pistolet" class="form-group d-none col-md-4">
+                    <label for="form_pistolet">Le pistolet</label>
+                    <select class="form-control" name="form_pistolet" id="form_pistolet">
+                        <option value="">-- SELECTIONNER LE PISTOLET --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="row2" class="form-row d-none">
+                <div class="form-group col-md-5">
+                    <label form="date_inf">Date debut</label>
+                    <input type="date" name="date_inf" class="form-control" required>
+                </div>
+                <div class="form-group col-md-5">
+                    <label form="date_sup">Date fin</label>
+                    <input type="date" id="date_sup" name="date_sup" class="form-control" required>
+                </div>
+                <div class="form-group col-md-2 mt-4">
+                    <button class="btn btn-primary float-right" type="submit">ENVOYER</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="card-body">
+            {% if indexations is defined and indexations|length != 0 %}
+                <p class="font-weight-bold text-uppercase text-center text-primary mt-3">
+                    Indexations {{ pistolet.numeroPistolet }} | {{ pistolet.pompe.numero }}
+                    | {{ pistolet.pompe.station.name }} entre {{ dateInf }} et {{ dateSup }}</p>
+
+                <div class="col-md-12 mt-5">
+                    <div class="table-responsive">
+                        <table class="table table-striped text-center">
+                            <thead>
+                            <tr>
+                                <th>INDEX DEBUT</th>
+                                <th>INDEX FIN</th>
+                                <th>FAIT LE</th>
+                                <th>PRIX/LITTRE</th>
+                                <th>VENTE</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for indexation in indexations %}
+                                <tr>
+                                    <td><span class="badge badge-info text-uppercase font-weight-bold">{{ indexation.indexDebut|number_format }}</span>
+                                    </td>
+                                    <td>
+                                        {% if indexation.indexFin is same as(null) %}
+                                            <span class="badge badge-danger text-uppercase font-weight-bold">non effectué</span>
+                                        {% else %}
+                                            <span class="badge badge-info text-uppercase font-weight-bold">{{ indexation.indexFin|number_format }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ indexation.createdAt|format_datetime() }}</td>
+                                    <td>{{ indexation.pistolet.typeCarburant.priceLiter }} F</td>
+                                    <td>
+                                        {% if indexation.indexFin is same as(null) %}
+                                            <span class="badge badge-danger text-uppercase font-weight-bold">non determiné</span>
+                                        {% else %}
+                                            <span class="badge badge-primary text-uppercase font-weight-bold">{{ indexation.indexFin - indexation.indexDebut }} L</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if app.user.isAdmin %}
+                <div class="float-left mt-3 mb-5">
+                    <a href="{{ path('admin.indexations.create') }}" class="font-weight-bold text-uppercase"><i
+                                class="fas fa-plus"></i>&nbsp;Enregistrement
+                        indexation</a>
+                </div>
+            {% endif %}
+        </div>
+    </div> #}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(".alert").delay(10000).slideUp(200, function () {
+            $(this).alert('close');
+        });
+        let typeCarburant = $('#stockage_single_typeCarburant');
+        let cuveStockage = $('#stockage_cuve');
+
+        $(document).ready(function () {
+            typeCarburant.val('');
+            cuveStockage.empty();
+        });
+
+        typeCarburant.on('change', function (e) {
+            let id = e.target.value;
+            if (id !== '') {
+                loadCuves(+id);
+                cuveStockage.empty();
+            }
+        });
+
+        function loadCuves(typeId) {
+            $.ajax({
+                url: '/get-pistolets-by-typeCarburant/' + typeId,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    cuveStockage.empty().append($('<option>', {
+                        value: '',
+                        text: "-- SELECTIONNER LE PISTOLET --"
+                    }));
+
+                    $.each(data, function (index, pistolet) {
+                        cuveStockage.append($('<option>', {
+                            value: pistolet['id'],
+                            text: pistolet['numero']
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.log('error ==> ' + JSON.stringify(error))
+                }
+            });
+        }
+    </script>
+{% endblock %}

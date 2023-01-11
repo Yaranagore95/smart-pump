@@ -1,0 +1,21 @@
+{{ form_start(form, {'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+
+<div class="form-group">
+    <label for="typeCarburant">Type Carburant</label>
+    <select class="form-control" required name="typeCarburant" id="typeCarburant">
+        <option value="">-- CHOISIR TYPE CARBURANT --</option>
+        {% for typeC in typeCarburants %}
+            <option {% if pistolet is defined and pistolet.typeCarburant is same as(typeC) %} selected {% endif %}
+                    value="{{ typeC.id }}">{{ typeC.name|upper }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="form-group">
+    <label for="numeroPompe">Numéro pompe</label>
+    <input type="number" class="form-control" {% if numeroPompe is defined %} value="{{ numeroPompe }}" {% endif %}
+           name="numeroPompe" id="numeroPompe">
+</div>
+
+{{ form_widget(form) }}
+<button class="btn btn-primary float-right mt-3">{{ button_label|default('ENREGISTRER') }}</button>
+{{ form_end(form) }}

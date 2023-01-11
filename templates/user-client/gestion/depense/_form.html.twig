@@ -1,0 +1,23 @@
+{{ form_start(form, {'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+{{ form_widget(form) }}
+<div class="form-group">
+    <label for="createdAt">DATE</label>
+    <input type="date" class="form-control" id="createdAt" name="createdAt" required>
+</div>
+
+<div id="form-detail">
+
+</div>
+
+<div class="form-row mt-3 ml-1">
+    <div class="col-md-2"><h5 class="font-weight-bold text-uppercase">DETAIL DEPENSE</h5></div>
+    <div class="col-md-1">
+        <button type="button" id="btnAddDetail" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i></button>
+    </div>
+</div>
+
+<input type="hidden" id="hiddenVal" value="0" name="hiddenVal">
+<div class="form-group mt-3 mb-3">
+    <button class="btn btn-primary float-right" type="submit">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_start(form) }}

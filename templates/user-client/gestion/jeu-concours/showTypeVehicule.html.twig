@@ -1,0 +1,144 @@
+{% extends 'base-gestion-client.html.twig' %}
+{% block title 'Detail type de vehicule' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">DETAIL TYPE VEHICULE {{ typeVehicule.name }}</h3>
+    <hr>
+    <div class="card">
+        <div class="card-body text-uppercase font-weight-bold">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-boldmb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <hr class="mt-3 mb-3">
+            <h3 class="font-weight-bold text-uppercase mt-3">LES CHAUFFEURS DE {{ typeVehicule.name }}</h3>
+            <hr>
+            {% if chauffeurs != [] %}
+                <table class="table table-striped table-bordered text-center font-weight-bold text-uppercase">
+                    <thead>
+                    <tr class="bg-primary-gradient text-white font-weight-bold text-uppercase">
+                        <th>NOM</th>
+                        <th>PRENOM</th>
+                        <th>DATE NAISSANCE</th>
+                        <th>INSCRIT LE</th>
+                        <th>ACTION</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for chauffeur in chauffeurs %}
+                        <tr>
+                            <td>{{ chauffeur.nom }}</td>
+                            <td>{{ chauffeur.prenom }}</td>
+                            <td>{{ chauffeur.dateNaissance|date('d-m-Y') }}</td>
+                            <td>{{ chauffeur.createdAt|date('d-m-Y') }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ path('gestion_jeux_concours.chauffeur.show', {'id': chauffeur.id}) }}" class="btn btn-success btn-sm"><i
+                                                class="fas fa-eye"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-danger font-weight-bold text-uppercase text-center">Aucun chauffeur
+                    de {{ typeVehicule.name }} n'est enregistré
+                </div>
+            {% endif %}
+            <hr class="mt-3 mb-3">
+            <h3 class="font-weight-bold text-uppercase mt-3">LES LES VEHICULES DE TYPE {{ typeVehicule.name }}</h3>
+            <hr>
+            {% if vehicules != [] %}
+                <div class="table-responsive mt-3">
+                    <table class="table table-striped table-bordered font-weight-bold text-center text-uppercase">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>IMMATRICULATION</th>
+                            <th>CHAUFFEUR</th>
+                            <th>INSCRIT LE</th>
+                            <th>QTE PRISE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for vehicule in vehicules %}
+                            <tr>
+                                <td>{{ vehicule.immatriculation }}</td>
+                                <td>{{ vehicule.chauffeur.nom }} {{ vehicule.chauffeur.prenom }}</td>
+                                <td>{{ vehicule.createdAt|date('d-m-Y') }}</td>
+                                {% set qte = 0 %}
+                                {% for bon in vehicule.bonChauffeurs %}
+                                    {% set qte = qte + bon.quantite %}
+                                {% endfor %}
+                                <td>{{ qte|format_number }} L </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.vehicule.show', {'id': vehicule.id}) }}" class="btn btn-outline-success btn-sm"><i
+                                                    class="fas fa-eye"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+            <hr class="mt-3">
+            <h3 class="font-weight-bold text-uppercase">LES BONS DES CHAUFFEURS DE TYPE {{ typeVehicule.name }}</h3>
+            <hr>
+            <div class="table-responsive mt-3">
+                {% if bons != [] %}
+                    <table class="table table-striped table-bordered text-center font-weight-bold text-uppercase">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>QTE</th>
+                            <th>MONTANT</th>
+                            <th>VEHICULE</th>
+                            <th>DATE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set qteTotal = 0 %}
+                        {% for bon in bons %}
+                            {% set qteTotal = qteTotal + bon.quantite %}
+                            <tr>
+                                <td>{{ bon.quantite|format_number }} L</td>
+                                <td>{{ bon.montant|format_number }} FCFA</td>
+                                <td>{{ bon.vehiculeChauffeur.immatriculation }}</td>
+                                <td>{{ bon.createdAt|date('d-m-Y') }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.bon.show', {'id': bon.id}) }}" class="btn btn-outline-success btn-sm"><i
+                                                    class="fas fa-eye"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr class="bg-danger-gradient text-white font-weight-bold">
+                            <td colspan="5">QUANTITE TOTALE DES BONS DES {{ typeVehicule.name }} : {{ qteTotal|format_number }} L</td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                {% else %}
+                    <div class="alert alert-danger font-weight-bold text-uppercase text-center">
+                        Aucun bon chaufffeur n'a été trouvé
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

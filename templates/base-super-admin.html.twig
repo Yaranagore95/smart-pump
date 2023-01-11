@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" href="{{ asset('images/icon.png') }}" type="image/x-icon"/>
+
+    <!-- Fonts and icons -->
+    <script src="{{ asset('assets/js/plugin/webfont/webfont.min.js') }}"></script>
+    <script>
+        WebFont.load({
+            google: {"families": ["Lato:300,400,700,900"]},
+            custom: {
+                "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular",
+                    "Font Awesome 5 Brands", "simple-line-icons"], urls: ['/assets/css/fonts.min.css']
+            },
+            active: function () {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/atlantis.min.css') }}">
+    {% block stylesheets %}
+        {# {{ encore_entry_link_tags('app') }} #}
+    {% endblock %}
+
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="main-header">
+        <!-- Logo Header -->
+        <div class="logo-header bg-dark">
+            <a href="{{ path('app.index') }}" class="logo">
+                <p class="navbar-brand text-white">{{ app_name }}</p>
+            </a>
+            <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
+                    data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon">
+                        <i class="icon-menu"></i>
+                    </span>
+            </button>
+            <button class="topbar-toggler more"><i class="icon-options-vertical"></i></button>
+            <div class="nav-toggle">
+                <button class="btn btn-toggle toggle-sidebar">
+                    <i class="icon-menu"></i>
+                </button>
+            </div>
+        </div>
+        <!-- End Logo Header -->
+
+        <!-- Navbar Header -->
+        <nav class="navbar navbar-header navbar-expand-lg bg-dark">
+            <div class="container-fluid">
+                <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+
+                    <li class="nav-item dropdown hidden-caret">
+                        <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
+                           aria-expanded="false">
+                            <div class="avatar-sm">
+                                {% if app.user and app.user.profile != null and app.user.profile != '' %}
+                                    <img src="{{ vich_uploader_asset(app.user) }}" alt="..."
+                                         class="avatar-img rounded-circle">
+                                {% else %}
+                                    <img src="{{ asset('images/profile.png') }}" alt="..."
+                                         class="avatar-img rounded-circle">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user animated fadeIn">
+                            <div class="dropdown-user-scroll scrollbar-outer">
+                                <li>
+                                    <div class="user-box">
+                                        <div class="avatar-lg">
+                                            {% if app.user and app.user.profile != null and app.user.profile != '' %}
+                                                <img src="{{ vich_uploader_asset(app.user) }}" alt="image profile"
+                                                     class="avatar-img rounded">
+                                            {% else %}
+                                                <img src="{{ asset('images/profile.png') }}" alt="image profile"
+                                                     class="avatar-img rounded">
+                                            {% endif %}
+                                        </div>
+                                        <div class="u-text">
+                                            <h4>{% if app.user %}
+                                                    {{ app.user.nom }}
+                                                {% endif %}</h4>
+                                            {% if app.user and app.user.isAdmin %}
+                                                Administrateur
+                                            {% else %}
+                                                Utilisateur
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="{{ path('superAdmin.index') }}" class="dropdown-item">Dashboard</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item"
+                                       href="{{ path('superAdmin.users.edit', {'id': app.user.id}) }}">Mon
+                                        Profile</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
+                                </li>
+                            </div>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!-- End Navbar -->
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-style-2">
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <div class="user">
+                    <div class="avatar-sm float-left mr-2">
+                        {% if app.user and app.user.profile != null and app.user.profile != '' %}
+                            <img src="{{ vich_uploader_asset(app.user) }}" alt="..." class="avatar-img rounded-circle">
+                        {% else %}
+                            <img src="#" alt="..." class="avatar-img rounded-circle">
+                        {% endif %}
+                    </div>
+                    <div class="info">
+                        <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+                                <span>
+                                    {% if app.user %}
+                                        {{ app.user.nom }}
+                                    {% endif %}
+                                    <span class="user-level">
+                                        {% if app.user and app.user.isAdmin %}
+                                            Administrateur
+                                        {% else %}
+                                            Utilisateur
+                                        {% endif %}
+                                    </span>
+
+                                </span>
+                        </a>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                {% set route_name = app.request.attributes.get('_route') %}
+                {% set url = app.request.uri %}
+                <ul class="nav nav-primary">
+                    <li class="nav-item {% if route_name == "admin.index" %} active {% endif %}">
+                        <a href="{{ path('superAdmin.index') }}">
+                            <i class="fas fa-home"></i>
+                            <p>REGLAGE</p>
+                        </a>
+                    </li>
+                    <li class="nav-section">
+                            <span class="sidebar-mini-icon">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </span>
+                        <h4 class="text-section">FONCTIONNALITE</h4>
+                    </li>
+
+                    <li class="nav-item {% if 'users' in url %} active {% endif %}">
+                        <a href="{{ path('superAdmin.users') }}">
+                            <i class="fas fa-user-graduate"></i>
+                            <p>UTILISATEURS</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item {% if 'user-clients' in url %} active {% endif %}">
+                        <a href="{{ path('superAdmin.userClients') }}">
+                            <i class="fas fa-user-check"></i>
+                            <p>LES CLIENTS</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- End Sidebar -->
+
+    <div class="main-panel">
+        <div class="content">
+            <div class="page-inner">
+                {% block breadcrump %}
+
+                {% endblock %}
+                <div class="page-category">
+                    {% block body %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <nav class="pull-left">
+
+                </nav>
+                <div class="copyright ml-auto">
+                    2020, made by <a href="https://www.its-mali.com">ITS-MALI</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</div>
+
+<!--   Core JS Files   -->
+<script src="{{ asset('assets/js/core/jquery.3.2.1.min.js') }}"></script>
+<script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
+<script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
+
+<!-- jQuery UI -->
+<script src="{{ asset('assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js') }}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+
+<!-- jQuery Sparkline -->
+<script src="{{ asset('assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
+
+<!-- Bootstrap Notify -->
+<script src="{{ asset('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+
+<!-- jQuery Vector Maps -->
+<script src="{{ asset('assets/js/plugin/jqvmap/jquery.vmap.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugin/jqvmap/maps/jquery.vmap.world.js') }}"></script>
+
+<!-- Sweet Alert -->
+<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+
+<!-- Atlantis JS -->
+<script src="{{ asset('assets/js/atlantis.min.js') }}"></script>
+
+{% block javascripts %}
+    {# {{ encore_entry_script_tags('app') }} #}
+{% endblock %}
+
+</body>
+</html>

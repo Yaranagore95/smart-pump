@@ -1,0 +1,7 @@
+{{ form_start(formTypeVehicule, {'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+{{ form_widget(formTypeVehicule) }}
+
+<div class="form-group mt-3 mb-3">
+    <button class="btn btn-primary float-right" type="submit">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_start(formTypeVehicule) }}

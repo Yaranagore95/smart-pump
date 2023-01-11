@@ -1,0 +1,16 @@
+{% extends 'base-dashboard-client.html.twig' %}
+
+{% block title 'Modifier station' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">GESTION STATION</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">MODIFIER STATION</h3>
+        <div class="card-body text-uppercase font-weight-bold">
+            {{ include('user-client/dashboard/station/_form_edit.html.twig') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %} {% endblock %}

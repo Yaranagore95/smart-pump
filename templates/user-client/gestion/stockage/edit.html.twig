@@ -1,0 +1,61 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block body %}
+    <h3 class="font-weight-bold">GESTION STOCKAGE</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold">MODIFICATION STOCKAGE {{ stockage.cuve.numero }}</h3>
+        <div class="card-body">
+            {{ include('user-client/gestion/stockage/_form_add.html.twig') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block title 'Modification stockage' %}
+
+{% block javascripts %}
+    <script>
+        $(".alert").delay(5000).slideUp(200, function () {
+            $(this).alert('close');
+        });
+        let typeCarburant = $('#stockage_single_typeCarburant');
+        let cuveStockage = $('#stockage_cuve');
+
+        $(document).ready(function () {
+            typeCarburant.val('');
+            cuveStockage.empty();
+        });
+
+        typeCarburant.on('change', function (e) {
+            let id = e.target.value;
+            if (id !== '') {
+                loadCuves(id);
+                cuveStockage.empty();
+            }
+        });
+
+        function loadCuves(typeId) {
+            $.ajax({
+                url: '/get-cuves-by-type-carburant/' + typeId,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    cuveStockage.empty().append($('<option>', {
+                        value: '',
+                        text: "-- SELECTIONNER LA CUVE DE STOCKAGE --"
+                    }));
+
+                    $.each(data, function (index, cuve) {
+                        cuveStockage.append($('<option>', {
+                            value: cuve['id'],
+                            text: cuve['numero']
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.log('error ==> ' + error)
+                }
+            });
+        }
+    </script>
+{% endblock %}

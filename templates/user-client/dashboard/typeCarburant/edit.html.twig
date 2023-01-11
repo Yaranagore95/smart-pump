@@ -1,0 +1,21 @@
+{% extends '../../../base-super-admin.html.twig' %}
+
+{% block body %}
+    <h3 class="font-weight-bold">GESTION TYPE DE CARBURANT</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">Modifier type de carburant</h3>
+        <div class="card-body text-uppercase font-weight-bold">
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {{ include('user-client/dashboard/typeCarburant/_form.html.twig', {'button_label': 'MODIFIER'}) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block title 'Modifier type de carburant' %}
+

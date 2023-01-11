@@ -1,0 +1,32 @@
+{{ form_start(form, {'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+
+<div class="form-row">
+    <div class="col-md-6">{{ form_row(form.nom) }}</div>
+    <div class="col-md-6">{{ form_row(form.prenom) }}</div>
+</div>
+
+
+<div class="form-row">
+    <div class="col-md-6">{{ form_row(form.telephone) }}</div>
+    <div class="col-md-6">{{ form_row(form.adresse) }}</div>
+</div>
+
+<div class="form-row">
+    {% for typeCarburant in typeCarburants %}
+        {% if client is defined %}
+            {% set keys = client.prixCarburant %}
+        {% endif %}
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="prixTypeCarburant">PRIX POUR {{ typeCarburant.name|upper }} / L</label>
+                <input {% if client is defined and keys is defined %} value="{{ keys[typeCarburant.name]|default('') }}" {% endif %} type="number" class="form-control" name="prixTypeCarburant{{ typeCarburant.id }}" id="prixTypeCarburant">
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{{ form_widget(form) }}
+
+<button class="btn btn-primary mt-3 float-right">{{ button_label|default('ENREGISTRER') }}</button>
+
+{{ form_end(form) }}

@@ -1,0 +1,197 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">RESULTAT DE LA RECHER</h3>
+    <div class="card">
+        <div class="card-body text-uppercase font-weight-bold">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-boldmb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if chauffeurs is defined and chauffeurs != [] %}
+                <hr>
+                <h5 class="font-weight-bold text-uppercase">RESULTAT DE LA RECHERCHE</h5>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center font-weight-bold text-uppercase mb-5">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white font-weight-bold text-uppercase">
+                            <th>NOM</th>
+                            <th>PRENOM</th>
+                            <th>VEHICULE</th>
+                            <th>DATE NAISSANCE</th>
+                            <th>INSCRIT LE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for chauffeur in chauffeurs %}
+                            <tr>
+                                <td>{{ chauffeur.nom }}</td>
+                                <td>{{ chauffeur.prenom }}</td>
+                                <td>
+                                    <span class="badge badge-warning font-weight-bold">
+                                        {{ chauffeur.typeVehicule.name }}
+                                    </span>
+                                </td>
+                                <td>{{ chauffeur.dateNaissance|date('d-m-Y') }}</td>
+                                <td>
+                                    <span class="badge badge-dark font-weight-bold">{{ chauffeur.createdAt|date('d-m-Y') }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.chauffeur.show', {'id': chauffeur.id}) }}"
+                                           class="btn btn-success btn-sm"><i
+                                                    class="fas fa-eye"></i></a>
+                                        <a href="{{ path('gestion_jeux_concours.chauffeur.edit', {'id': chauffeur.id}) }}"
+                                           class="btn btn-sm btn-warning"><i
+                                                    class="fas fa-user-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('gestion_jeux_concours.chauffeur.delete', {'id': chauffeur.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ chauffeur.id) }}">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+
+            {% if vehicules is defined and vehicules != [] %}
+                <hr class="mt-5">
+                <h3 class="font-weight-bold text-uppercase"><u>LES VEHICULES</u></h3>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table table-bordered font-weight-bold text-center text-uppercase">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>IMMATRICULATION</th>
+                            <th>CHAUFFEUR</th>
+                            <th>TYPE VEHICULE</th>
+                            <th>INSCRIT LE</th>
+                            <th>QTE PRISE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for vehicule in vehicules %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-danger font-weight-bold">{{ vehicule.immatriculation }}</span>
+                                </td>
+                                <td>{{ vehicule.chauffeur.nom }} {{ vehicule.chauffeur.prenom }}</td>
+                                <td>
+                                    <span class="badge badge-warning font-weight-bold">{{ vehicule.chauffeur.typeVehicule.name }}</span>
+                                </td>
+                                <td>{{ vehicule.updatedAt|date('d-m-Y') }}</td>
+                                {% set qte = 0 %}
+                                {% for bon in vehicule.bonChauffeurs %}
+                                    {% set qte = bon.quantite %}
+                                {% endfor %}
+                                <td>{{ qte|number_format }} L</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.vehicule.show', {'id': vehicule.id}) }}"
+                                           class="btn btn-outline-success btn-sm"><i
+                                                    class="fas fa-eye"></i></a>
+                                        <a href="{{ path('gestion_jeux_concours.vehicule.edit', {'id': vehicule.id}) }}"
+                                           class="btn btn-sm btn-outline-warning"><i
+                                                    class="fas fa-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('gestion_jeux_concours.vehicule.delete', {'id': vehicule.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ vehicule.id) }}">
+                                            <button class="btn btn-outline-danger btn-sm"><i
+                                                        class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="mt-5">
+                <h3 class="font-weight-bold text-uppercase">LES BONS DES CHAUFFEURS</h3>
+                <hr>
+                <div class="table-responsive">
+                    <table class="table  table-bordered text-center font-weight-bold text-uppercase">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>QTE</th>
+                            <th>MONTANT</th>
+                            <th>VEHICULE</th>
+                            <th>CARBURANT</th>
+                            <th>DATE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for vehicule in vehicules %}
+                            {% for bon in vehicule.bonChauffeurs %}
+                                <tr>
+                                    <td>
+                                        <span class="badge badge-danger font-weight-bold">{{ bon.quantite|format_number }} L</span>
+                                    </td>
+                                    <td>{{ bon.montant|format_number }} FCFA</td>
+                                    <td>
+                                        <span class="badge badge-dark font-weight-bold">{{ bon.vehiculeChauffeur.immatriculation }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-warning">{{ bon.vehiculeChauffeur.typeCarburant.name }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-success font-weight-bold">{{ bon.createdAt|date('d-m-Y') }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ path('gestion_jeux_concours.bon.show', {'id' : bon.id}) }}"
+                                               class="btn btn-outline-success btn-sm"><i
+                                                        class="fas fa-eye"></i></a>
+                                            <a href="{{ path('gestion_jeux_concours.bonChauffeur.edit', {'id': bon.id}) }}"
+                                               class="btn btn-sm btn-outline-warning"><i
+                                                        class="fas fa-edit"></i></a>
+                                            <form method="post"
+                                                  action="{{ path('gestion_jeux_concours.bonChauffeur.delete', {'id': bon.id}) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('delete' ~ bon.id) }}">
+                                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block title 'Resultat de la recherche' %}
+

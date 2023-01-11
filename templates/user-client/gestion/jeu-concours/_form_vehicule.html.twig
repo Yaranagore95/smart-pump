@@ -1,0 +1,30 @@
+{{ form_start(form, {'multipart': true, 'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+
+<div class="form-group">
+    <label for="chauffeur">CHAUFFEUR</label>
+    <select name="chauffeur" id="chauffeur" class="form-control" required>
+        <option value="">-- CHOISIR CHAUFFEUR --</option>
+        {% for typeVehicule in typeVehicules %}
+            {% for chauffeur in typeVehicule.chauffeurs %}
+                <option {% if chauffeur.id == vehicule.chauffeur.id %} selected {% endif%} value="{{ chauffeur.id }}">-- {{ chauffeur.nom|upper }} {{ chauffeur.prenom}} {{ chauffeur.dateNaissance|date('d-m-Y')}} --</option>
+            {% endfor %}
+        {% endfor %}
+    </select>
+</div>
+<div class="form-group">
+    <label for="typeCarburant">TYPE CARBURANT</label>
+    <select name="typeCarburant" id="typeCarburant" class="form-control text-uppercase"
+            required>
+        <option value="">-- CHOISIR LE TYPE DE CARBURANT --</option>
+        {% for typeCarburant in typeCarburants %}
+            <option {% if typeCarburant.id == vehicule.typeCarburant.id %} selected {% endif%} value="{{ typeCarburant.id }}">{{ typeCarburant.name|upper }}</option>
+        {% endfor %}
+    </select>
+</div>
+{{ form_widget(form) }}
+
+<div class="form-group mt-3 mb-3">
+    <button class="btn btn-primary float-right"
+            type="submit">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_start(form) }}

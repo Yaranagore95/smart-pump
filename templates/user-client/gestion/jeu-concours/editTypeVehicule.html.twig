@@ -1,0 +1,25 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">MODIFICATION TYPE VEHICULE {{ typeVehicule.name }}</h3>
+    <hr>
+    <div class="card">
+        <div class="card-body font-weight-bold text-uppercase">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-boldmb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {{ include('user-client/gestion/jeu-concours/_form_type_vehicule.html.twig') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block title 'Modification du type de vehicule' %}
+

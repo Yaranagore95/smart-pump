@@ -1,0 +1,144 @@
+{% extends "base-gestion-client.html.twig" %}
+
+{% block title 'Les jaugeages' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">GESTION JAUGEAGE</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase"><i class="fas fa-plus"></i> ENREGISTREMENT JAUGEAGE</h3>
+        <div class="card-body font-weight-bold text-uppercase">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {{ include('user-client/gestion/jaugeage/_form_add.html.twig') }}
+            <hr class="mt-5">
+            {% if jaugeages is defined %}
+                {% if cuve is defined %}
+                    <h3 class="font-weight-bold text-uppercase">Jaugeages {{ cuve.numero }}
+                        | {{ cuve.station.name }} entre {{ dateInf }} et {{ dateSup }}</h3>
+                    <hr>
+                {% else %}
+                    {% if all is defined %}
+                        <h3 class="font-weight-bold text-uppercase mt-5">Les jaugeages entre {{ dateInf }}
+                            et {{ dateSup }}</h3>
+                        <hr>
+                    {% else %}
+                        <h3 class="font-weight-bold text-uppercase mt-5">Tous les jaugeages</h3>
+                        <hr>
+                    {% endif %}
+                {% endif %}
+
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            {% if cuve is not defined %}
+                                <th>CUVE</th>
+                            {% endif %}
+                            <th>QTE</th>
+                            <th>DATE</th>
+                            <th>DERNIER</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for jaugeage in jaugeages %}
+                            <tr>
+                                {% if cuve is not defined %}
+                                    <td>
+                                        <span class="badge badge-info font-weight-bold">{{ jaugeage.cuve.numero|upper }}</span>
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    <span class="badge badge-success font-weight-bold">{{ jaugeage.quantite|number_format }} L</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-dark font-weight-bold">{{ jaugeage.createdAt|date('d-m-Y') }}</span>
+                                </td>
+                                <td>
+                                    {% if jaugeage.isLast %}
+                                        <span class="badge badge-primary">OUI</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">NON</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if jaugeage.isLast %}
+                                        <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-edit"></i></a>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-dark"><i class="fas fa-eye-slash"></i></button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="float-right">{{ knp_pagination_render(jaugeages) }}</div>
+                </div>
+            {% endif %}
+            <div class="form-group">
+                <input type="hidden" value="{{ app.user.id }}" id="user_id">
+                {% if station is defined %}
+                    <input type="hidden" value="{{ station.id }}" id="stationId">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(".alert").delay(10000).slideUp(200, function () {
+            $(this).alert('close');
+        });
+        let typeCarburant = $('#stockage_single_typeCarburant');
+        let cuveStockage = $('#stockage_cuve');
+
+        $(document).ready(function () {
+            typeCarburant.val('');
+            cuveStockage.empty();
+        });
+
+        typeCarburant.on('change', function (e) {
+            let id = e.target.value;
+            if (id !== '') {
+                loadCuves(+id);
+                cuveStockage.empty();
+            }
+        });
+
+        function loadCuves(typeId) {
+            $.ajax({
+                url: '/get-cuves-by-type-carburant/' + typeId,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    console.log('data :: ' + JSON.stringify(data));
+                    cuveStockage.empty().append($('<option>', {
+                        value: '',
+                        text: "-- SELECTIONNER LA CUVE DE STOCKAGE --"
+                    }));
+
+                    $.each(data, function (index, cuve) {
+                        cuveStockage.append($('<option>', {
+                            value: cuve['id'],
+                            text: cuve['numero']
+                        }));
+                    });
+                },
+                error: function (error) {
+                    console.log('error ==> ' + error)
+                }
+            });
+        }
+    </script>
+{% endblock %}

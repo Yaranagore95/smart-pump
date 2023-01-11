@@ -1,0 +1,141 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Etats journalier' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">GESTION ETAT</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">Etats journaliers</h3>
+        <div class="card-body">
+            <form action="{{ path('gestion_etats.index') }}" method="post" class="mb-3">
+                <div class="form-row align-items-end">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="date_inf">DATE DEBUT</label>
+                            <input type="date" class="form-control" required name="date_inf" id="date_inf">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="date_sup">DATE FIN</label>
+                            <input type="date" class="form-control" required name="date_sup" id="date_sup">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary">VALIDER</button>
+                    </div>
+                </div>
+            </form>
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if arrayVentePistoletTypeCarburant is not empty %}
+                <hr>
+                <h3 class="font-weight-bold text-uppercase">LES VENTES</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered font-weight-bold text-uppercase text-center">
+                        <thead>
+                        <tr class="bg-primary text-white">
+                            <th>CARBURANT</th>
+                            <th>MONTANT</th>
+                            <th>QTE</th>
+                            <th>BON PRIX</th>
+                            <th>BON QTE</th>
+                            <th>NET</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ventePistoletTypeCarburant in arrayVentePistoletTypeCarburant %}
+                            <tr>
+                                <td>{{ ventePistoletTypeCarburant.typeCarburant.name|upper }}</td>
+                                <td>{{ ventePistoletTypeCarburant.montant|format_number }} F</td>
+                                <td>{{ ventePistoletTypeCarburant.qte|format_number }} L</td>
+                                <td>{{ ventePistoletTypeCarburant.montantBon|format_number }} F</td>
+                                <td>{{ ventePistoletTypeCarburant.qteBon|format_number }} L</td>
+                                <td>{{ ventePistoletTypeCarburant.montantNet|format_number }} F</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if depenses is defined and depenses is not empty %}
+                <hr>
+                <h3 class="font-weight-bold text-uppercase">LES DEPENSES</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr class="bg-primary text-white">
+                            <th>LIBELLE</th>
+                            <th>DATE</th>
+                            <th>MONTANT</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for depense in depenses %}
+                            <tr>
+                                <td>{{ depense.libelle }}</td>
+                                <td>{{ depense.createdAt|date('d/m/Y') }}</td>
+                                <td>{{ depense.montant|format_number }} F</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right font-weight-bold">TOTAL
+                                : {{ montantDepense|format_number }} F
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if retourCuves is defined and retourCuves is not empty %}
+                <hr class="mt-3">
+                <h3 class="font-weight-bold text-uppercase">LES RETOURS EN CUVE</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr class="bg-primary text-white">
+                            <th>QTE</th>
+                            <th>TYPE</th>
+                            <th>DATE</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for retourCuve in retourCuves %}
+                            <tr>
+                                <td>{{ retourCuve.quantite|format_number }} L</td>
+                                <td>{{ retourCuve.typeCarburant.name|upper }}</td>
+                                <td>{{ retourCuve.createdAt|date('d-m-Y') }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if montantNet is defined %}
+                <button class="btn btn-warning text-uppercase font-weight-bold mt-3 mb-3 float-right" type="button">
+                    Montant total à recevoir : {{ montantNet|number_format }} F
+                </button>
+                <a href="{{ path('gestion_etats.generatePDF', {'dateInf': dateInf, 'dateSup': dateSup}) }}"
+                   class="btn btn-success mt-3 mb-3 float-left">GENERE PDF</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

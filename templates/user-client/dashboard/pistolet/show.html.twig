@@ -1,0 +1,121 @@
+{% extends "../../../base-super-admin.html.twig" %}
+
+{% block title 'Detail pistolet' %}
+
+{% block breadcrump %}
+{% include "layouts/breadcrump.html.twig" with { 'page':'Pistolet', 'link1': '/admin', 'link2':'/admin/pistolets',
+'text1': 'Pistolets', 'text2': 'Detail pistolet' } %}
+{% endblock %}
+
+{% block body %}
+<hr>
+<p class="font-weight-bolder text-uppercase mt-3 mb-3">Detail {{ pistolet.numeroPistolet }} | {{ pistolet.numeroPompe }}
+    | {{ pistolet.pompe.station.name }} </p>
+
+{% for message in app.flashes('success') %}
+<div class="alert alert-success text-center text-uppercase font-weight-boldermb-3">
+    {{ message }}
+</div>
+{% endfor %}
+
+{% for message in app.flashes('danger') %}
+<div class="alert alert-danger text-center text-uppercase font-weight-bolder mb-3">
+    {{ message }}
+</div>
+{% endfor %}
+
+<div class="card col-md-12">
+    <div class="card-body">
+        <p class="text-center">
+            <img src="{{ asset('img/station_pompe.png') }}" alt="image de la pompe" width='250px;' height='300px;'>
+        </p>
+        <p class="mt-3 text-center text-uppercase font-weight-bolder">{{ pistolet.numeroPompe }}| {{ pistolet.numeroPistolet }}</p>
+    </div>
+</div>
+<div class="col-md-12">
+    <div class="table-responsive">
+        <table class="table table-striped text-center mg-b-0">
+            <thead>
+                <tr>
+                    <th>NUMERO</th>
+                    <th>NUMERO POMPE</th>
+                    <th>CARBURANT</th>
+                    <th>PRIX LITTRE</th>
+                    <th>INDEX</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ pistolet.numeroPistolet }}</td>
+                    <td>{{ pistolet.numeroPompe }}</td>
+                    <td>{{ pistolet.typeCarburant.name }}</td>
+                    <td>
+                        <span class="badge badge-info">{{ pistolet.typeCarburant.priceLiter }} FCFA</span>
+                    </td>
+                    <td>{{ pistolet.indexPistolet }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <h5 class="font-weight-bolder mt-3">LES INDEXATIONS DES 7 DERNIERS JOURS DU PISTOLET</h5>
+        <table class="table table-striped text-center mg-b-0 mt-3">
+            <thead>
+                <tr>
+                    <th>INDEX DEBUT</th>
+                    <th>INDEX FIN</th>
+                    <th>FAIT</th>
+                    <th>MAJ</th>
+                    <th>VENTE</th>
+                    <th>MONTANT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index in indexations %}
+                <tr>
+                    <td><span class="badge badge-primary">{{ index.indexDebut|number_format }}</span></td>
+                    <td>
+                        {% if index.indexFin is same as(null) %}
+                        <span class="badge badge-danger">non effectué</span>
+                        {% else %}
+                        <span class="badge badge-danger">{{ index.indexFin|number_format }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ index.createdAt|format_datetime()}}</td>
+                    <td>
+                        {% if index.updatedAt != null %}
+                            {{ index.updatedAt|format_datetime()}}
+                        {% else %}
+                            <span class="badge badge-dark">non effectué</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if index.indexFin is same as(null) %}
+                            <span class="badge badge-danger">non determiné</span>
+                            {% else %}
+                            <span class="badge badge-info font-weight-bolder">{{ (index.indexFin - index.indexDebut)|number_format }} L</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if index.indexFin is same as(null) %}
+                        <span class="badge badge-danger">inconnu</span>
+                        {% else %}
+                        <span class="badge badge-info font-weight-bolder">{{ ((index.indexFin - index.indexDebut)* index.pistolet.typeCarburant.priceLiter )|number_format }} FCFA</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <div class="float-right pagination">
+                            {{ knp_pagination_render(indexations) }}
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

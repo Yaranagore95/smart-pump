@@ -1,0 +1,71 @@
+{% extends 'base-dashboard-client.html.twig' %}
+
+{% block title 'Les stations' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">Gestion station</h3>
+    <hr>
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">Les stations</h3>
+
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if stations is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-bordered font-weight-bold text-center">
+                        <thead class="bg-primary-gradient text-white">
+                        <tr>
+                            <td>NOM</td>
+                            <td>ADRESSE</td>
+                            <td>TELEPHONE</td>
+                            <td>ACTION</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for station in stations %}
+                            <tr>
+                                <td>{{ station.name|upper }}</td>
+                                <td>{{ station.adresse }}</td>
+                                <td>{{ station.telephone }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="#" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ path('clients.stations.edit', {'id': station.id}) }}"
+                                           class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('clients.stations.delete', {'id': station.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer cette station ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ station.id) }}">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="float-right pagination">{{ knp_pagination_render(stations) }}</div>
+            {% else %}
+                <div class="alert alert-danger font-weight-bold text-center">AUCUN ENREGISTREMENT TROUVE</div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('clients.stations.create') }}" class="btn btn-warning"><i class="fas fa-plus"></i>&nbsp;NOUVELLE
+                STATION</a>
+        </div>
+    </div>
+{% endblock %}

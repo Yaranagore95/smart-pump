@@ -1,0 +1,505 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Les infos jeux concours' %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">Gestion du jeux concours des chauffeurs</h3>
+    <hr>
+    <div class="card">
+        <div class="card-body text-uppercase font-weight-bold">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-boldmb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <h3 class="font-weight-bold text-uppercase">LES TYPES DE VEHICULES DU CONCOURS</h3>
+            <hr>
+            {% if typeVehicules.count != 0 %}
+                <div class="table-responsive">
+                    <table class="table  table-bordered font-weight-bold text-uppercase text-center">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white font-weight-bold">
+                            <th>VEHICULE</th>
+                            <th>NBRE CHAUFFEUR</th>
+                            <th>NBRE VEHICULE</th>
+                            <th>QTE RECOMPENSEE</th>
+                            <th>DATE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for typeVehicule in typeVehicules %}
+                            <tr>
+                                <td>{{ typeVehicule.name }}</td>
+                                <td>
+                                    <span class="badge badge-info font-weight-bold">
+                                        {{ typeVehicule.chauffeurs.count }}
+                                    </span>
+                                </td>
+                                {% set counter = 0 %}
+                                {% for chauffeur in typeVehicule.chauffeurs %}
+                                    {% set counter = (counter |default(0) ) + chauffeur.vehiculeChauffeurs.count %}
+                                {% endfor %}
+                                <td>
+                                    <span class="badge badge-success font-weight-bold">{{ counter }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-danger font-weight-bold">
+                                        {{ typeVehicule.qteRecompense|number_format }} L
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-dark font-weight-bold">{{ typeVehicule.createdAt|date('d-m-Y') }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.typeVehicule.show', {'id' : typeVehicule.id}) }}"
+                                           class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ path('gestion_jeux_concours.typeVehicule.edit', {'id': typeVehicule.id}) }}"
+                                           class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('gestion_jeux_concours.type-vehicule.delete', {'id': typeVehicule.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ typeVehicule.id) }}">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-danger font-weight-bold text-center">VOUS N'AVEZ PAS DE TYPE DE VEHICULE
+                    ENREGISTRES
+                </div>
+            {% endif %}
+            <hr class="mt-5">
+            <h3 class="font-weight-bold text-uppercase"><u>LES CHAUFFEURS DU CONCOURS</u></h3>
+            <hr class="">
+            {% if chauffeurs.count != 0 %}
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center font-weight-bold text-uppercase mb-5">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white font-weight-bold text-uppercase">
+                            <th>NOM</th>
+                            <th>PRENOM</th>
+                            <th>VEHICULE</th>
+                            <th>DATE NAISSANCE</th>
+                            <th>INSCRIT LE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for chauffeur in chauffeurs %}
+                            <tr>
+                                <td>{{ chauffeur.nom }}</td>
+                                <td>{{ chauffeur.prenom }}</td>
+                                <td>
+                                    <span class="badge badge-warning font-weight-bold">
+                                        {{ chauffeur.typeVehicule.name }}
+                                    </span>
+                                </td>
+                                <td>{{ chauffeur.dateNaissance|date('d-m-Y') }}</td>
+                                <td>
+                                    <span class="badge badge-dark font-weight-bold">{{ chauffeur.createdAt|date('d-m-Y') }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.chauffeur.show', {'id': chauffeur.id}) }}"
+                                           class="btn btn-success btn-sm"><i
+                                                    class="fas fa-eye"></i></a>
+                                        <a href="{{ path('gestion_jeux_concours.chauffeur.edit', {'id': chauffeur.id}) }}"
+                                           class="btn btn-sm btn-warning"><i
+                                                    class="fas fa-user-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('gestion_jeux_concours.chauffeur.delete', {'id': chauffeur.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ chauffeur.id) }}">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="float-right">{{ knp_pagination_render(chauffeurs) }}</div>
+            {% else %}
+                <div class="alert alert-danger font-weight-bold text-uppercase text-center">Aucun chauffeur
+                    de {{ typeVehicule.name }} n'est enregistré
+                </div>
+            {% endif %}
+            <hr class="mt-5">
+            <h3 class="font-weight-bold text-uppercase"><u>LES VEHICULES DES CHAUFFEURS</u></h3>
+            <hr>
+            {% if vehicules.count != 0 %}
+                <div class="table-responsive">
+                    <table class="table table-bordered font-weight-bold text-center text-uppercase">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>IMMATRICULATION</th>
+                            <th>CHAUFFEUR</th>
+                            <th>TYPE VEHICULE</th>
+                            <th>INSCRIT LE</th>
+                            <th>QTE PRISE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for vehicule in vehicules %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-danger font-weight-bold">{{ vehicule.immatriculation }}</span>
+                                </td>
+                                <td>{{ vehicule.chauffeur.nom }} {{ vehicule.chauffeur.prenom }}</td>
+                                <td>
+                                    <span class="badge badge-warning font-weight-bold">{{ vehicule.chauffeur.typeVehicule.name }}</span>
+                                </td>
+                                <td>{{ vehicule.updatedAt|date('d-m-Y') }}</td>
+                                {% set qte = 0 %}
+                                {% for bon in vehicule.bonChauffeurs %}
+                                    {% set qte = bon.quantite %}
+                                {% endfor %}
+                                <td>{{ qte|number_format }} L</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.vehicule.show', {'id': vehicule.id}) }}"
+                                           class="btn btn-outline-success btn-sm"><i
+                                                    class="fas fa-eye"></i></a>
+                                        <a href="{{ path('gestion_jeux_concours.vehicule.edit', {'id': vehicule.id}) }}"
+                                           class="btn btn-sm btn-outline-warning"><i
+                                                    class="fas fa-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('gestion_jeux_concours.vehicule.delete', {'id': vehicule.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ vehicule.id) }}">
+                                            <button class="btn btn-outline-danger btn-sm"><i
+                                                        class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="float-right">{{ knp_pagination_render(vehicules) }}</div>
+            {% else %}
+                <div class="alert alert-danger font-weight-bold text-center">VOUS N'AVEZ PAS DE VEHICULE
+                    ENREGISTRES
+                </div>
+            {% endif %}
+            <hr class="mt-5">
+            <h3 class="font-weight-bold text-uppercase">LES BONS DES CHAUFFEURS</h3>
+            <hr>
+            <div class="table-responsive">
+                {% if bonChauffeurs.count != 0 %}
+                    <table class="table  table-bordered text-center font-weight-bold text-uppercase">
+                        <thead>
+                        <tr class="bg-primary-gradient text-white">
+                            <th>QTE</th>
+                            <th>MONTANT</th>
+                            <th>VEHICULE</th>
+                            <th>CARBURANT</th>
+                            <th>DATE</th>
+                            <th>ACTION</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for bon in bonChauffeurs %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-danger font-weight-bold">{{ bon.quantite|format_number }} L</span>
+                                </td>
+                                <td>{{ bon.montant|format_number }} FCFA</td>
+                                <td>
+                                    <span class="badge badge-dark font-weight-bold">{{ bon.vehiculeChauffeur.immatriculation }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-warning">{{ bon.vehiculeChauffeur.typeCarburant.name }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-success font-weight-bold">{{ bon.createdAt|date('d-m-Y') }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('gestion_jeux_concours.bon.show', {'id' : bon.id}) }}"
+                                           class="btn btn-outline-success btn-sm"><i
+                                                    class="fas fa-eye"></i></a>
+                                        <a href="{{ path('gestion_jeux_concours.bonChauffeur.edit', {'id': bon.id}) }}"
+                                           class="btn btn-sm btn-outline-warning"><i
+                                                    class="fas fa-edit"></i></a>
+                                        <form method="post"
+                                              action="{{ path('gestion_jeux_concours.bonChauffeur.delete', {'id': bon.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr(e) de supprimer ?');">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="_token"
+                                                   value="{{ csrf_token('delete' ~ bon.id) }}">
+                                            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="float-right">{{ knp_pagination_render(bonChauffeurs) }}</div>
+                {% else %}
+                    <div class="alert alert-danger font-weight-bold text-uppercase text-center">
+                        Aucun bon chaufffeur n'a été trouvé
+                    </div>
+                {% endif %}
+            </div>
+
+            <button class="btn btn-outline-success" type="button" data-toggle="modal"
+                    data-target=".modalRecherche"><i class="fa fa-search-plus"></i>&nbsp;RECHERCHER
+            </button>
+        </div>
+        <div class="card-footer">
+            <div class="btn-group">
+                <button type="button" data-toggle="modal"
+                        data-target=".modalTypeVehicule"
+                        class="btn btn-warning font-weight-bold text-decoration-none text-white mr-2"><i
+                            class="fas fa-plus"></i> NOUVEAU TYPE DE VEHICULE
+                </button>
+                <button type="button" data-toggle="modal"
+                        data-target=".modalChauffeur"
+                        class="btn btn-warning font-weight-bold text-decoration-none text-white mr-2"><i
+                            class="fas fa-plus"></i> NOUVEAU CHAUFFEUR
+                </button>
+                <button type="button" data-toggle="modal"
+                        data-target=".modalVehicule"
+                        class="btn btn-warning font-weight-bold text-decoration-none text-white mr-2"><i
+                            class="fas fa-plus"></i> NOUVEAU VEHICULE
+                </button>
+                <button type="button" data-toggle="modal"
+                        data-target=".modalBonChauffeur"
+                        class="btn btn-warning font-weight-bold text-decoration-none text-white"><i
+                            class="fas fa-plus"></i> NOUVEAU BON
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modalTypeVehicule" tabindex="-1" role="dialog" aria-labelledby="1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content font-weight-bold text-uppercase">
+                <h3 class="modal-header font-weight-bold">ENREGISTREMENT TYPE VEHICULE</h3>
+                <div class="modal-body">
+                    <form method="post" action="{{ path('gestion_jeux_concours.index') }}">
+                        <div class="form-group">
+                            <label for="name">TYPE</label>
+                            <input type="text" id="name" class="form-control" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">DESCRIPTION</label>
+                            <input type="text" name="description" id="description" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="qteRecompense">Qte recompensée</label>
+                            <input type="number" name="qteRecompense" id="qteRecompense" class="form-control" required>
+                        </div>
+                        <button class="btn btn-primary float-right mt-2" type="submit" name="btnAddTypeVehicule"
+                                value="1">ENREGISTRER
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modalVehicule" tabindex="-1" role="dialog" aria-labelledby="2"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content font-weight-bold text-uppercase">
+                <h3 class="modal-header font-weight-bold">ENREGISTREMENT VEHICULE</h3>
+                <div class="modal-body">
+                    <form method="post" action="{{ path('gestion_jeux_concours.index') }}">
+                        <div class="form-group">
+                            <label for="immatriculation">N° MATRICULE</label>
+                            <input type="text" id="immatriculation" class="form-control" name="immatriculation"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">DESCRIPTION</label>
+                            <input type="text" name="description" id="description" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="typeCarburant">TYPE CARBURANT</label>
+                            <select name="typeCarburant" id="typeCarburant" class="form-control text-uppercase"
+                                    required>
+                                <option value="">-- CHOISIR LE TYPE DE CARBURANT --</option>
+                                {% for typeCarburant in typeCarburants %}
+                                    <option value="{{ typeCarburant.id }}">{{ typeCarburant.name|upper }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="chauffeur">CHAUFFEUR</label>
+                            <select name="chauffeur" id="chauffeur" class="form-control text-uppercase" required
+                                    data-live-search="true">
+                                <option value="">-- CHOISIR LE CHAUFFEUR --</option>
+                                {% for typeVehicule in typeVehicules %}
+                                    {% for chauffeur in typeVehicule.chauffeurs %}
+                                        <option data-tokens="{{ chauffeur.nom }} {{ chauffeur.prenom }} {{ chauffeur.dateNaissance|date('d-m-Y') }}"
+                                                value="{{ chauffeur.id }}">{{ chauffeur.nom }} {{ chauffeur.prenom }} {{ chauffeur.dateNaissance|date('d-m-Y') }}</option>
+                                    {% endfor %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button class="btn btn-primary float-right mt-2" type="submit" name="btnAddVehicule"
+                                value="1">ENREGISTRER
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modalBonChauffeur" tabindex="-1" role="dialog" aria-labelledby="3"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content font-weight-bold text-uppercase">
+                <h3 class="modal-header font-weight-bold">ENREGISTREMENT BON CHAUFFEUR</h3>
+                <div class="modal-body">
+                    <form method="post" action="{{ path('gestion_jeux_concours.index') }}"
+                          enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="vehiculeChauffeur">VEHICULE CHAUFFEUR</label>
+                            <select name="vehiculeChauffeur" id="vehiculeChauffeur" class="form-control text-uppercase"
+                                    required data-live-search="true">
+                                <option value="">-- CHOISIR LE VEHICULE --</option>
+                                {% for typeVehicule in typeVehicules %}
+                                    {% for chauffeur in typeVehicule.chauffeurs %}
+                                        {% for vehicule in chauffeur.vehiculeChauffeurs %}
+                                            <option data-tokens="{{ vehicule.immatriculation }}"
+                                                    value="{{ vehicule.id }}">{{ vehicule.immatriculation|upper }}</option>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantite">QUANTITE</label>
+                            <input type="text" id="quantite" class="form-control" name="quantite"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pieceJointe">PIECE JOINTE</label>
+                            <input type="file" name="pieceJointe" id="pieceJointe" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="date">DATE</label>
+                            <input type="date" id="date" class="form-control" name="date"
+                                   required>
+                        </div>
+                        <button class="btn btn-primary float-right mt-2" type="submit" name="btnAddBon"
+                                value="1">ENREGISTRER
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modalRecherche" tabindex="-1" role="dialog" aria-labelledby="1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content font-weight-bold text-uppercase">
+                <h3 class="modal-header font-weight-bold">RECHERCHE</h3>
+                <div class="modal-body">
+                    <form method="post" action="{{ path('gestion_jeux_concours.recherche') }}">
+                        <div class="form-group">
+                            <label for="typeRecherche">RECHERCHER PAR</label>
+                            <select name="typeRecherche" id="typeRecherche" class="form-control" required>
+                                <option value="">-- TYPE DE RECHERCHE --</option>
+                                <option value="1">RECHERCHE DE CHAUFFEUR</option>
+                                <option value="2">RECHERCHE DE VEHICULE</option>
+                                <option value="3">RECHERCHE DE BON CHAUFFEUR</option>
+                            </select>
+                        </div>
+                        <div id="form-content"></div>
+                        <button class="btn btn-primary float-right mt-2" type="submit"
+                                value="1">RECHERCHE
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade modalChauffeur" tabindex="-1" role="dialog" aria-labelledby="4"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content font-weight-bold text-uppercase">
+                <h3 class="modal-header font-weight-bold">ENREGISTREMENT NOUVEAU CHAUFFEUR</h3>
+                <div class="modal-body">
+                    {{ include('user-client/gestion/jeu-concours/_form_chauffeur.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
+    <script>
+        $(function () {
+            $('select').selectpicker();
+        });
+        $('.custom-file input').change(function (e) {
+            let files = [];
+            for (let i = 0; i < $(this)[0].files.length; i++) {
+                files.push($(this)[0].files[i].name);
+            }
+            $(this).next('.custom-file-label').html(files.join(', '));
+        });
+        let typeRecherche = $('#typeRecherche');
+
+        typeRecherche.change(function (e) {
+            let content1 = '<div class="form-group"><label for="chauffeurInfo">NOM/PRENOM/TELEPHONE</label> <input type="text" class="form-control" required id="chauffeurInfo" name="infoChauffeur"> </div>';
+            let content2 = '<div class="form-group"> <label for="immatriculationVehicule">IMMATRICULATION</label> <input type="text" class="form-control" required id="immatriculationVehicule" name="immatriculationChauffeur"> </div>'
+            let value = e.target.value;
+            switch (value) {
+                case '':
+                    document.getElementById('form-content').innerHTML = '';
+                    break;
+                case '1':
+                    document.getElementById('form-content').innerHTML = content1;
+                    break;
+                default:
+                    document.getElementById('form-content').innerHTML = content2;
+            }
+        });
+
+
+    </script>
+{% endblock %}

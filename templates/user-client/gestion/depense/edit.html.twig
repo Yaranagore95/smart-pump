@@ -1,0 +1,76 @@
+{% extends "base-gestion-client.html.twig" %}
+
+{% block title 'Modifier depense' %}
+
+{% block body %}
+    <div class="card">
+        <h3 class="card-header font-weight-bold text-uppercase">Modifier depense</h3>
+        <div class="card-body">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold ">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {{ include('user-client/gestion/depense/_form.html.twig', {'button_label': 'MODIFIER'}) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        let i = 0;
+        $(document).ready(function () {
+            $('#btnAddDetail').on('click', function () {
+                i++;
+                $('#hiddenVal').val(i);
+                $('#form-detail').append(
+                    '<div class="row' + (i) + '">' +
+                    '<hr>' +
+                    '<h5 class="text-uppercase ml-1 mt-3 font-weight-bold">DETAIL DEPENSE</h5>' +
+                    '<div class="form-row align-items-end">' +
+                    '<div class="col-md-4">' +
+                    '<div class="form-group">' +
+                    '<label for="libelle">Libelle </label>' +
+                    '<input type="text" name="libelle' + (i) + '" required class="form-control" id="libelle">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-md-3">' +
+                    '<div class="form-group">' +
+                    '<label for="montant">Montant </label>' +
+                    '<input type="number" name="montant' + (i) + '" required class="form-control" id="montant">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-md-4">' +
+                    '<div class="form-group">' +
+                    '<label for="description">Description </label>' +
+                    '<input type="text" name="description' + (i) + '" class="form-control" id="description">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-md-1 mb-3 float-right"><button type="button" class="btn btn-sm btn-danger removeDetail" id="' + (i) + '"><i class="fas fa-trash-alt"></i></button></div>' +
+                    '</div>' +
+                    '</div>'
+                );
+            });
+        });
+
+        $(document).on('click', '.removeDetail', function () {
+            let val = $(this).attr('id');
+            if (confirm('Êtes-vous sur ?')) {
+                let rows = document.getElementsByClassName('row' + val);
+                for (let j = 0; j < rows.length; j++) {
+                    rows[j].remove();
+                    i--;
+                    $('#hiddenVal').val(i);
+                }
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,40 @@
+{{ form_start(form, {'multipart': true, 'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+<div class="form-row font-weight-bold align-items-end">
+    <div class="col-md-6">
+        {{ form_row(form.nom) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.prenom) }}
+    </div>
+</div>
+
+<div class="form-row font-weight-bold align-items-end">
+    <div class="col-md-6">
+        {{ form_row(form.email) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.telephone) }}
+    </div>
+</div>
+
+<div class="form-row font-weight-bold align-items-end">
+    <div class="col-md-6">
+        {{ form_row(form.adresse) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.imageFile) }}
+    </div>
+</div>
+
+<div class="form-row font-weight-bold align-items-end">
+    <div class="col-md-6">
+        {{ form_row(form.password.first) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.password.second) }}
+    </div>
+</div>
+
+{{ form_widget(form) }}
+
+{{ form_end(form) }}

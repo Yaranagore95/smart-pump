@@ -1,0 +1,14 @@
+{% extends 'base-super-admin.html.twig' %}
+
+{% block title 'Page admin' %}
+
+{% block body %}
+    <div class="container">
+        <div class="jumbotron">
+            <h2 class="font-weight-bold text-uppercase text-center">
+                BIENVENU(e) {{ app.user.nom }} {{ app.user.prenom }}</h2>
+            <p class="text-center font-weight-bold text-uppercase mt-5">Vous êtes connecté en tant que super admin
+                de {{ app_name }}</p>
+        </div>
+    </div>
+{% endblock %}

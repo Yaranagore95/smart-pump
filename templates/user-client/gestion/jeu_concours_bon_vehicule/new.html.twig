@@ -1,0 +1,33 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Les infos jeux concours' %}
+
+{% block body %}
+    <h1 class="h3 font-weight-bold text-uppercase">Nouveau bon de vehicule</h1>
+    <hr>
+    <div class="card">
+        <div class="card-header">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="card-body">
+            <div class="text-uppercase">
+                {{ include('user-client/gestion/jeu_concours_bon_vehicule/_form.html.twig') }}
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <a class="text-uppercase" href="{{ path('jeu_concours_bon_vehicule_index') }}">Retourner à la liste</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Les infos jeux concours' %}
+
+{% block body %}
+    <h1 class="h3 font-weight-bold">LES BONS DES VEHICULES</h1>
+    <hr>
+    <div class="card">
+        <div class="card-header">
+            <div class="btn-group float-right">
+                <a class="btn btn-primary text-uppercase text-white" href="{{ path('jeu_concours_bon_vehicule_new') }}">Nouveau
+                    bon</a>
+                <a class="btn btn-warning text-uppercase text-white" href="{{ path('jeu_concours_vehicule_index') }}">Les
+                    vehicules</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-secondary table-bordered-bd-danger table-hover text-center">
+                    <thead>
+                    <tr class="text-uppercase bg-primary text-white">
+                        <th>Matricule</th>
+                        <th>Quantite</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for jeu_concours_bon_vehicule in jeu_concours_bon_vehicules %}
+                        <tr>
+                            <td><span class="badge badge-success">{{ jeu_concours_bon_vehicule.matricule }}</span></td>
+                            <td><span class="badge badge-primary">{{ jeu_concours_bon_vehicule.quantite|number_format }} L</span>
+                            </td>
+                            <td><span class="badge badge-warning">{{ jeu_concours_bon_vehicule.montant|number_format }} F</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-info">{{ jeu_concours_bon_vehicule.createdAt ? jeu_concours_bon_vehicule.createdAt|date('Y-m-d') : '' }}</span>
+                            </td>
+                            <td>
+                                <a class="btn btn-success btn-sm"
+                                   href="{{ path('jeu_concours_bon_vehicule_show', {'id': jeu_concours_bon_vehicule.id}) }}"><i
+                                            class="fa fa-eye"></i></a>
+                                <a class="btn btn-danger btn-sm"
+                                   href="{{ path('jeu_concours_bon_vehicule_edit', {'id': jeu_concours_bon_vehicule.id}) }}"><i
+                                            class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">AUCUN ENREGISTREMENT</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="float-right pagination">{{ knp_pagination_render(jeu_concours_bon_vehicules) }}</div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block body %}
+    <h3 class="font-weight-bold text-uppercase">MODIFICATION CHAUFFEUR {{ chauffeur.nom }} {{ chauffeur.prenom }}</h3>
+    <hr>
+    <div class="card">
+        <div class="card-body font-weight-bold text-uppercase">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success text-center text-uppercase font-weight-boldmb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('danger') %}
+                <div class="alert alert-danger text-center text-uppercase font-weight-bold mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {{ include('user-client/gestion/jeu-concours/_form_chauffeur.html.twig') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block title 'Modifier le chauffeur' %}
+
+{% block javascripts %}
+    <script>
+        $('.custom-file input').change(function (e) {
+            let files = [];
+            for (let i = 0; i < $(this)[0].files.length; i++) {
+                files.push($(this)[0].files[i].name);
+            }
+            $(this).next('.custom-file-label').html(files.join(', '));
+        });
+    </script>
+{% endblock %}
+

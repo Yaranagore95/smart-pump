@@ -1,0 +1,14 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Les infos jeux concours' %}
+
+
+{% block body %}
+    <h1>Edit JeuConcoursBonVehicule</h1>
+
+    {{ include('user-client/gestion/jeu_concours_bon_vehicule/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('jeu_concours_bon_vehicule_index') }}">back to list</a>
+
+    {{ include('user-client/gestion/jeu_concours_bon_vehicule/_delete_form.html.twig') }}
+{% endblock %}

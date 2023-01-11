@@ -1,0 +1,69 @@
+{% extends 'base-gestion-client.html.twig' %}
+
+{% block title 'Les infos jeux concours' %}
+
+{% block body %}
+    <h1 class="h3 font-weight-bold">LES VEHICULES</h1>
+    <hr>
+    <div class="card">
+        <div class="card-header">
+            <div class="btn-group float-right">
+                <a class="btn btn-primary text-uppercase text-white"
+                   href="{{ path('jeu_concours_bon_vehicule_index') }}">VOIR
+                    LES
+                    BONS</a>
+                <a class="btn btn-warning text-uppercase text-white" type="button" data-toggle="modal"
+                   data-target=".modalRecherche" href="{{ path('jeu_concours_bon_vehicule_index') }}">RECHERCHER</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered-bd-danger table-secondary table-hover text-center">
+                    <thead>
+                    <tr class="text-uppercase bg-primary text-white">
+                        <th>Matricule</th>
+                        <th>Quantite</th>
+                        <th>Montant</th>
+                        <th>actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for vehicule in vehicules %}
+                        <tr>
+                            <td><span class="badge badge-success">{{ vehicule.matricule }}</span></td>
+                            <td><span class="badge badge-primary">{{ vehicule.qteTotal|format_number }} L</span></td>
+                            <td>
+                                <span class="badge badge-secondary">{{ vehicule.montantTotal|format_currency('XAF') }}</span>
+                            </td>
+                            <td>
+                                <a class="btn btn-success btn-sm" href="#"><i class="fa fa-eye"></i></a>
+                                <a class="btn btn-danger btn-sm" href="#"><i class="fa fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade modalRecherche" tabindex="-1" role="dialog" aria-labelledby="1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content font-weight-bold text-uppercase">
+                <h3 class="modal-header font-weight-bold">ENREGISTREMENT TYPE VEHICULE</h3>
+                <div class="modal-body">
+                    <form method="post" action="{{ path('jeu_concours_bon_vehicule_find') }}">
+                        <div class="form-group">
+                            <label for="matricule">MATRICULE</label>
+                            <input type="text" id="matricule" class="form-control" name="matricule" required>
+                        </div>
+                        <button class="btn btn-primary float-right mt-2" type="submit"
+                                value="1">RECHERCHER
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

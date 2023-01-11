@@ -1,0 +1,66 @@
+{{ form_start(form, {'multipart': true, 'attr': {'onsubmit':"return confirm('Êtes-vous sûr(e) ?')"}}) }}
+{% for user in form.users %}
+    <div class="form-row align-items-end">
+        <div class="col-md-6">
+            {{ form_row(user.nom) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(user.prenom) }}
+        </div>
+    </div>
+
+    <div class="form-row align-items-end">
+        <div class="col-md-6">
+            {{ form_row(user.email) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(user.telephone) }}
+        </div>
+    </div>
+
+    <div class="form-row align-items-end">
+        <div class="col-md-6">
+            {{ form_row(user.adresse) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(user.imageFile,{'attr': {'class': 'text-danger'}}) }}
+        </div>
+    </div>
+
+    <div class="form-row align-items-end">
+        <div class="col-md-6">
+            {{ form_row(user.password.first) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(user.password.second) }}
+        </div>
+    </div>
+
+{% endfor %}
+
+<hr>
+<h5 class="font-weight-bold text-uppercase">INFORMATION ENTREPRISE</h5>
+<hr>
+<div class="form-row">
+    <div class="col-md-6">
+        {{ form_row(form.name) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.telephone) }}
+    </div>
+</div>
+<div class="form-row">
+    <div class="col-md-6">
+        {{ form_row(form.adresse) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.imageFile) }}
+    </div>
+</div>
+
+{{ form_widget(form) }}
+
+<div class="form-group">
+    <button class="btn btn-dark btn-sm float-right">{{ button_label|default('ENREGISTRER') }}</button>
+</div>
+{{ form_end(form) }}
